@@ -777,6 +777,63 @@
       line-height: 1.45;
     }
 
+    .review-card {
+      border: 1px solid color-mix(in srgb, var(--active-color), #ffffff 42%);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--active-color), #ffffff 86%), #ffffff);
+    }
+
+    .review-card h3 {
+      margin: 0;
+      font-size: 0.98rem;
+    }
+
+    .review-card p {
+      margin: 8px 0 0;
+      color: #48504c;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .review-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .review-stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .review-stat strong,
+    .review-stat span {
+      display: block;
+      line-height: 1;
+    }
+
+    .review-stat strong {
+      font-size: 1.2rem;
+    }
+
+    .review-stat span {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .review-card .button {
+      width: 100%;
+      margin-top: 12px;
+    }
+
     .card-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1496,6 +1553,15 @@
     const LEGACY_STORAGE_KEY = "cartomancy-coach-v1";
     const SECURE_STORAGE_KEY = "cartomancy-coach-secure-v1";
     const PBKDF2_ITERATIONS = 250000;
+    const REVIEW_INTERVALS = [
+      5 * 60 * 1000,
+      30 * 60 * 1000,
+      6 * 60 * 60 * 1000,
+      24 * 60 * 60 * 1000,
+      3 * 24 * 60 * 60 * 1000,
+      7 * 24 * 60 * 60 * 1000,
+      14 * 24 * 60 * 60 * 1000
+    ];
     const VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "0", "J", "Q", "K"];
     const VALUE_LABELS = {
       A: "Ace",
@@ -1671,6 +1737,9 @@
         D: {},
         C: {},
         S: {}
+      },
+      review: {
+        cards: {}
       }
     };
 
@@ -1735,6 +1804,14 @@
         completed: {
           ...base.completed,
           ...(stored.completed || {})
+        },
+        review: {
+          ...base.review,
+          ...(stored.review || {}),
+          cards: {
+            ...base.review.cards,
+            ...(stored.review?.cards || {})
+          }
         }
       };
     }
@@ -1985,6 +2062,12 @@
       };
     }
 
+    function parseCardCode(code) {
+      const suitKey = code.slice(-1);
+      const value = code.slice(0, -1);
+      return cardData(suitKey, value);
+    }
+
     function getAllCards() {
       return Object.keys(SUITS).flatMap((suitKey) => VALUES.map((value) => cardData(suitKey, value)));
     }
@@ -2022,9 +2105,94 @@
       return LEVELS.findIndex((level, index) => isUnlocked(suitKey, index) && !state.completed[suitKey]?.[level.key]);
     }
 
+    function learnedCardCodes(suitKey = null) {
+      const codes = new Set();
+      Object.keys(SUITS).forEach((sectionSuitKey) => {
+        if (suitKey && suitKey !== sectionSuitKey) {
+          return;
+        }
+        LEVELS.forEach((level) => {
+          if (!state.completed[sectionSuitKey]?.[level.key]) {
+            return;
+          }
+          level.deck.forEach((value) => codes.add(cardCode(sectionSuitKey, value)));
+        });
+      });
+      return [...codes];
+    }
+
+    function syncReviewCards() {
+      if (!state.review) {
+        state.review = { cards: {} };
+      }
+      if (!state.review.cards) {
+        state.review.cards = {};
+      }
+
+      let changed = false;
+      const now = new Date().toISOString();
+      learnedCardCodes().forEach((code) => {
+        if (!state.review.cards[code]) {
+          state.review.cards[code] = {
+            box: 0,
+            dueAt: now,
+            seen: 0,
+            correct: 0,
+            wrong: 0,
+            lastResult: null
+          };
+          changed = true;
+        }
+      });
+      return changed;
+    }
+
+    function reviewCardsForSuit(suitKey) {
+      syncReviewCards();
+      const learned = learnedCardCodes(suitKey);
+      return learned.map((code) => ({
+        code,
+        card: parseCardCode(code),
+        review: state.review.cards[code]
+      }));
+    }
+
+    function dueReviewCards(suitKey) {
+      const now = Date.now();
+      return reviewCardsForSuit(suitKey)
+        .filter((item) => new Date(item.review.dueAt).getTime() <= now)
+        .sort((a, b) => new Date(a.review.dueAt).getTime() - new Date(b.review.dueAt).getTime());
+    }
+
+    function nextDueReview(suitKey) {
+      const upcoming = reviewCardsForSuit(suitKey)
+        .map((item) => new Date(item.review.dueAt).getTime())
+        .filter((time) => Number.isFinite(time))
+        .sort((a, b) => a - b);
+      return upcoming.length ? upcoming[0] : null;
+    }
+
+    function formatWait(ms) {
+      if (ms <= 0) {
+        return "now";
+      }
+      const minutes = Math.ceil(ms / 60000);
+      if (minutes < 60) {
+        return `${minutes} min`;
+      }
+      const hours = Math.ceil(minutes / 60);
+      if (hours < 48) {
+        return `${hours} hr`;
+      }
+      return `${Math.ceil(hours / 24)} days`;
+    }
+
     function render() {
       const suit = SUITS[state.currentSuit];
       document.documentElement.style.setProperty("--active-color", suit.color);
+      if (syncReviewCards()) {
+        saveState();
+      }
       renderHud();
       renderSuitList();
       renderMainStage();
@@ -2150,12 +2318,35 @@
     function renderStudyGuide() {
       const suitKey = state.currentSuit;
       const suit = SUITS[suitKey];
+      const learned = reviewCardsForSuit(suitKey);
+      const due = dueReviewCards(suitKey);
+      const nextDue = nextDueReview(suitKey);
+      const nextDueText = learned.length
+        ? due.length
+          ? "now"
+          : formatWait(nextDue - Date.now())
+        : "after a level";
       els.studyGuide.innerHTML = `
         <div class="guide-head">
           <h2>${suit.name} Study Guide</h2>
           <p>${suit.domain}</p>
         </div>
         <div class="guide-body">
+          <div class="review-card">
+            <h3>Timed Repetition</h3>
+            <p>${learned.length ? "Cards you have passed in this suit come back on a spaced timer. Correct answers push cards farther out; missed cards return sooner." : "Finish a level in this suit to add those cards to the timed review queue."}</p>
+            <div class="review-stats">
+              <div class="review-stat">
+                <strong>${due.length}</strong>
+                <span>Due</span>
+              </div>
+              <div class="review-stat">
+                <strong>${learned.length}</strong>
+                <span>Learned</span>
+              </div>
+            </div>
+            <button class="button" type="button" id="startReviewButton" ${due.length ? "" : "disabled"}>${due.length ? `Review ${Math.min(due.length, 12)} Cards` : `Next: ${nextDueText}`}</button>
+          </div>
           <div class="theme-card">
             <h3>Pattern to Memorize</h3>
             <p>${suit.lessonCopy}</p>
@@ -2186,6 +2377,8 @@
           }
         });
       });
+      const reviewButton = els.studyGuide.querySelector("#startReviewButton");
+      reviewButton.addEventListener("click", () => startReviewSession(suitKey));
     }
 
     function resetProgress() {
@@ -2210,6 +2403,36 @@
         index: 0,
         correct: 0,
         lives: level.final ? 4 : 3,
+        xp: 0,
+        answered: false
+      };
+
+      const suit = SUITS[suitKey];
+      document.documentElement.style.setProperty("--active-color", suit.color);
+      els.lessonScreen.classList.add("active");
+      renderQuestion();
+    }
+
+    function startReviewSession(suitKey) {
+      const due = dueReviewCards(suitKey);
+      if (!due.length) {
+        showToast("No review cards are due yet.");
+        return;
+      }
+      const cards = shuffle(due).slice(0, 12).map((item) => item.card);
+      activeSession = {
+        mode: "review",
+        suitKey,
+        level: {
+          key: "timed-review",
+          title: "Timed Review",
+          xp: 0,
+          review: true
+        },
+        questions: buildReviewQuestions(cards),
+        index: 0,
+        correct: 0,
+        lives: 3,
         xp: 0,
         answered: false
       };
@@ -2247,6 +2470,16 @@
       }
 
       return shuffle(questions);
+    }
+
+    function buildReviewQuestions(cards) {
+      const builders = [
+        buildMeaningQuestion,
+        buildCardQuestion,
+        buildKeywordQuestion,
+        buildCardFromKeywordQuestion
+      ];
+      return shuffle(cards.map((card, index) => builders[index % builders.length](card)));
     }
 
     function buildThemeQuestion(suitKey) {
@@ -2334,6 +2567,30 @@
         ]),
         explain: `"${card.keyword}" points to the ${card.label}: ${card.meaning}.`
       };
+    }
+
+    function updateReviewSchedule(card, isCorrect) {
+      if (!activeSession || activeSession.mode !== "review" || !card?.code) {
+        return;
+      }
+      syncReviewCards();
+      const record = state.review.cards[card.code];
+      if (!record) {
+        return;
+      }
+
+      record.seen += 1;
+      record.lastResult = isCorrect ? "correct" : "wrong";
+      record.lastSeenAt = new Date().toISOString();
+      if (isCorrect) {
+        record.correct += 1;
+        record.box = Math.min((record.box || 0) + 1, REVIEW_INTERVALS.length - 1);
+      } else {
+        record.wrong += 1;
+        record.box = 0;
+      }
+      const interval = isCorrect ? REVIEW_INTERVALS[Math.max(record.box - 1, 0)] : REVIEW_INTERVALS[0];
+      record.dueAt = new Date(Date.now() + interval).toISOString();
     }
 
     function renderQuestion() {
@@ -2463,13 +2720,14 @@
 
       if (isCorrect) {
         activeSession.correct += 1;
-        activeSession.xp += activeSession.level.final ? 3 : 2;
+        activeSession.xp += activeSession.mode === "review" ? 1 : activeSession.level.final ? 3 : 2;
         state.streak += 1;
         state.bestRun = Math.max(state.bestRun, state.streak);
       } else {
         activeSession.lives -= 1;
         state.streak = 0;
       }
+      updateReviewSchedule(question.card, isCorrect);
       saveState();
 
       const feedback = els.lessonBody.querySelector("#feedback");
@@ -2491,13 +2749,15 @@
     function renderResult() {
       const session = activeSession;
       const total = session.questions.length;
-      const passed = session.lives > 0 && session.correct >= Math.ceil(total * 0.7);
-      const alreadyComplete = Boolean(state.completed[session.suitKey]?.[session.level.key]);
-      const earnedXp = passed ? session.level.xp + session.xp : Math.floor(session.xp / 2);
+      const isReview = session.mode === "review";
+      const passed = isReview || (session.lives > 0 && session.correct >= Math.ceil(total * 0.7));
+      const alreadyComplete = !isReview && Boolean(state.completed[session.suitKey]?.[session.level.key]);
+      const earnedXp = isReview ? session.xp : passed ? session.level.xp + session.xp : Math.floor(session.xp / 2);
 
       state.xp += earnedXp;
-      if (passed && !alreadyComplete) {
+      if (!isReview && passed && !alreadyComplete) {
         state.completed[session.suitKey][session.level.key] = true;
+        syncReviewCards();
       }
       saveState();
 
@@ -2508,7 +2768,7 @@
       els.lessonBody.innerHTML = `
         <div class="result active">
           <div class="result-badge">${passed ? "&#10003;" : "!"}</div>
-          <h2>${passed ? "Level passed" : "Practice round"}</h2>
+          <h2>${isReview ? "Review complete" : passed ? "Level passed" : "Practice round"}</h2>
           <p>${passed ? resultPassCopy(session) : "You ran out of room for misses or missed the pass mark. Review the guide and take this level again."}</p>
           <div class="result-stats">
             <div class="result-stat">
@@ -2525,7 +2785,7 @@
             </div>
           </div>
           <div class="hero-actions">
-            <button class="button" type="button" id="resultContinue">${passed ? "Back to path" : "Study path"}</button>
+            <button class="button" type="button" id="resultContinue">${isReview ? "Back to guide" : passed ? "Back to path" : "Study path"}</button>
             <button class="button secondary" type="button" id="resultRetry">Retry</button>
           </div>
         </div>
@@ -2533,12 +2793,22 @@
 
       els.lessonBody.querySelector("#resultContinue").addEventListener("click", closeLesson);
       els.lessonBody.querySelector("#resultRetry").addEventListener("click", () => {
-        startLesson(session.suitKey, session.level);
+        if (isReview) {
+          startReviewSession(session.suitKey);
+        } else {
+          startLesson(session.suitKey, session.level);
+        }
       });
       renderHud();
     }
 
     function resultPassCopy(session) {
+      if (session.mode === "review") {
+        const dueLeft = dueReviewCards(session.suitKey).length;
+        return dueLeft
+          ? `${dueLeft} ${dueLeft === 1 ? "card is" : "cards are"} still due for this suit.`
+          : "Your due cards moved forward on the timed review schedule.";
+      }
       if (session.level.final) {
         return `You completed the ${SUITS[session.suitKey].name} final. That suit is now mastered in your path.`;
       }
