@@ -848,6 +848,106 @@
       margin-top: 12px;
     }
 
+    .code-award,
+    .code-form-card,
+    .code-entry-card {
+      border: 1px solid color-mix(in srgb, var(--active-color), #ffffff 42%);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--active-color), #ffffff 88%), #ffffff);
+    }
+
+    .code-award {
+      width: min(560px, 100%);
+      text-align: left;
+    }
+
+    .code-award strong,
+    .code-entry-card strong {
+      display: block;
+      font-size: 0.86rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .code-value {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      margin-top: 10px;
+      border: 2px solid var(--active-color);
+      border-radius: var(--radius);
+      padding: 0 14px;
+      color: var(--active-color);
+      background: #ffffff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 1.55rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .code-award p,
+    .code-entry-card p,
+    .code-form-card p {
+      margin: 9px 0 0;
+      color: #46504b;
+      line-height: 1.45;
+    }
+
+    .code-form {
+      display: grid;
+      grid-template-columns: minmax(120px, 180px) auto;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .code-form input {
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0 12px;
+      color: var(--ink);
+      background: #ffffff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .code-form input:focus {
+      outline: none;
+      border-color: var(--active-color);
+      box-shadow: var(--focus);
+    }
+
+    .code-feedback {
+      min-height: 1.4em;
+      margin-top: 10px;
+      font-weight: 850;
+    }
+
+    .code-feedback.good {
+      color: var(--accent-dark);
+    }
+
+    .code-feedback.bad {
+      color: var(--danger);
+    }
+
+    .code-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .code-entry-card .code-value {
+      min-height: 40px;
+      font-size: 1.18rem;
+    }
+
     .card-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1641,6 +1741,7 @@
       }
 
       .spread-grid,
+      .code-list,
       .story-cards {
         grid-template-columns: 1fr;
       }
@@ -1714,8 +1815,13 @@
       .lesson-path,
       .answers,
       .spread-grid,
+      .code-list,
       .story-cards,
       .result-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .code-form {
         grid-template-columns: 1fr;
       }
 
@@ -1893,6 +1999,8 @@
     const LEGACY_STORAGE_KEY = "cartomancy-coach-v1";
     const SECURE_STORAGE_KEY = "cartomancy-coach-secure-v1";
     const PBKDF2_ITERATIONS = 250000;
+    const CODE_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const CODE_SALT = "cartomancy-coach-code-v1";
     const REVIEW_INTERVALS = [
       5 * 60 * 1000,
       30 * 60 * 1000,
@@ -2099,6 +2207,7 @@
     const SECTION_META = {
       suit: { key: "suit", name: "Suit Path", glyph: "&hearts;", color: "#238b68" },
       meanings: { key: "meanings", name: "Meanings", glyph: "M", color: "#5f6f87" },
+      codes: { key: "codes", name: "Codes", glyph: "#", color: "#3f6b73" },
       all: { key: "all", name: "All Suits Final", glyph: "F", color: "#8b651a" },
       spreads: { key: "spreads", name: "Spreads", glyph: "S", color: "#2b6f99" },
       advanced: { key: "advanced", name: "Advanced", glyph: "A", color: "#6f5b95" },
@@ -2337,6 +2446,7 @@
     let state = freshDefaultState();
     let activeSession = null;
     let activeReading = null;
+    let codeFeedback = null;
     let saveQueue = Promise.resolve();
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
@@ -2730,6 +2840,122 @@
       return SPREADS.find((spread) => spread.key === key);
     }
 
+    function hashSeed(seed) {
+      let hash = 2166136261;
+      for (let index = 0; index < seed.length; index += 1) {
+        hash ^= seed.charCodeAt(index);
+        hash = Math.imul(hash, 16777619);
+      }
+      return hash >>> 0;
+    }
+
+    function codeFromSeed(seed) {
+      let value = hashSeed(seed);
+      let code = "";
+      for (let index = 0; index < 4; index += 1) {
+        code += CODE_ALPHABET[value % CODE_ALPHABET.length];
+        value = Math.floor(value / CODE_ALPHABET.length);
+      }
+      return code;
+    }
+
+    function normalizeCodeInput(value) {
+      return (value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4);
+    }
+
+    function codeMilestones() {
+      const milestones = [];
+      Object.values(SUITS).forEach((suit) => {
+        LEVELS.forEach((level) => {
+          milestones.push({
+            key: `lesson:${suit.key}:${level.key}`,
+            label: `${suit.name}: ${level.title}`,
+            description: `Marks ${suit.name} ${level.title} complete.`,
+            isEarned: () => Boolean(state.completed[suit.key]?.[level.key]),
+            apply: () => {
+              if (!state.completed[suit.key]) {
+                state.completed[suit.key] = {};
+              }
+              state.completed[suit.key][level.key] = true;
+              syncReviewCards();
+            }
+          });
+        });
+        milestones.push({
+          key: `perfect:${suit.key}`,
+          label: `${suit.name}: Perfect Suit`,
+          description: `Marks every ${suit.name} lesson and final complete at 100%.`,
+          isEarned: () => Boolean(state.perfectFinals?.[suit.key]),
+          apply: () => completeSuit(suit.key, true)
+        });
+      });
+      milestones.push({
+        key: "all-final:perfect",
+        label: "All Suits Final",
+        description: "Marks all four suits complete and unlocks advanced meanings.",
+        isEarned: () => Boolean(state.perfectFinals?.all),
+        apply: completeAllSuitsPerfect
+      });
+      SPREAD_LEVELS.forEach((level) => {
+        milestones.push({
+          key: `spread:${level.key}`,
+          label: `Spread: ${level.title}`,
+          description: `Marks the ${level.title} spread test complete.`,
+          isEarned: () => Boolean(state.completedSpreads?.[level.key]),
+          apply: () => {
+            state.completedSpreads[level.key] = true;
+          }
+        });
+      });
+      ADVANCED_LEVELS.forEach((level) => {
+        milestones.push({
+          key: `advanced:${level.key}`,
+          label: `Advanced: ${level.title}`,
+          description: `Marks ${level.title} complete.`,
+          isEarned: () => Boolean(state.completedAdvanced?.[level.key]),
+          apply: () => {
+            state.completedAdvanced[level.key] = true;
+          }
+        });
+      });
+      milestones.push({
+        key: "story:first",
+        label: "Story Reading Pass",
+        description: "Restores one accepted story-reading practice pass.",
+        isEarned: () => (state.readingPractice?.passed || 0) > 0,
+        apply: () => {
+          state.readingPractice.passed = Math.max(state.readingPractice.passed || 0, 1);
+          state.readingPractice.attempts = Math.max(state.readingPractice.attempts || 0, 1);
+        }
+      });
+      return milestones;
+    }
+
+    function codeEntries() {
+      const used = new Set();
+      return codeMilestones().map((milestone) => {
+        let attempt = 0;
+        let code = "";
+        do {
+          code = codeFromSeed(`${CODE_SALT}:${milestone.key}:${attempt}`);
+          attempt += 1;
+        } while (used.has(code));
+        used.add(code);
+        return {
+          ...milestone,
+          code
+        };
+      });
+    }
+
+    function codeEntryForKey(key) {
+      return codeEntries().find((entry) => entry.key === key);
+    }
+
+    function codeEntryForCode(code) {
+      return codeEntries().find((entry) => entry.code === code);
+    }
+
     function shuffle(items) {
       const copy = [...items];
       for (let index = copy.length - 1; index > 0; index -= 1) {
@@ -2770,6 +2996,10 @@
 
     function advancedComplete() {
       return ADVANCED_LEVELS.every((level) => state.completedAdvanced?.[level.key]);
+    }
+
+    function readingsUnlocked() {
+      return advancedUnlocked() && advancedComplete();
     }
 
     function completeSuit(suitKey, perfect = false) {
@@ -2938,9 +3168,10 @@
       }).join("");
 
       const advancedStatus = advancedUnlocked() ? `${advancedCompletedCount()}/${ADVANCED_LEVELS.length}` : "Locked";
-      const readingsStatus = advancedComplete() ? `${state.readingPractice?.passed || 0} done` : "Locked";
+      const readingsStatus = readingsUnlocked() ? `${state.readingPractice?.passed || 0} done` : "Locked";
       const specialButtons = [
         specialSectionButtonHTML("meanings", "53", "Persistent card reference with simple and deep meanings."),
+        specialSectionButtonHTML("codes", "4", "Enter and review four-character progress codes."),
         specialSectionButtonHTML("all", state.perfectFinals?.all ? "100%" : `${perfectSuitCount()}/4`, "Perfect challenge across all 52 cards."),
         specialSectionButtonHTML("spreads", `${spreadCompletedCount()}/${SPREAD_LEVELS.length}`, "Learn cartomancy layouts and spread logic."),
         specialSectionButtonHTML("advanced", advancedStatus, "Deep card meanings unlock after perfect finals."),
@@ -2973,7 +3204,7 @@
     function specialSectionButtonHTML(sectionKey, status, description) {
       const section = SECTION_META[sectionKey];
       const active = state.currentSection === sectionKey ? " active" : "";
-      const locked = (sectionKey === "advanced" && !advancedUnlocked()) || (sectionKey === "readings" && !advancedComplete());
+      const locked = (sectionKey === "advanced" && !advancedUnlocked()) || (sectionKey === "readings" && !readingsUnlocked());
       return `
         <button class="suit-button${active}${locked ? " locked" : ""}" type="button" data-section="${sectionKey}" style="--suit-color:${section.color};--progress:${status === "100%" ? 100 : 0}%">
           <span class="suit-glyph">${section.glyph}</span>
@@ -2994,6 +3225,10 @@
       }
       if (state.currentSection === "meanings") {
         renderMeaningsStage();
+        return;
+      }
+      if (state.currentSection === "codes") {
+        renderCodesStage();
         return;
       }
       if (state.currentSection === "spreads") {
@@ -3161,6 +3396,101 @@
       });
     }
 
+    function renderCodesStage() {
+      const earned = codeEntries().filter((entry) => entry.isEarned());
+      els.mainStage.innerHTML = `
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>#</span> Password Save</p>
+            <h2>Progress Codes</h2>
+            <p>Use four-character alphanumeric codes to restore completed sections on another device. This is separate from encrypted local save data.</p>
+          </div>
+          <div class="deck-fan" aria-hidden="true">
+            ${["AH", "0D", "KC", "QS"].map((code, index) => `
+              <img class="fan-card" src="${cardImage(code)}" alt="" style="--rotate:${(index - 1.5) * 10}deg;--lift:${Math.abs(index - 1.5) * 8}px">
+            `).join("")}
+          </div>
+        </section>
+        <section class="path">
+          <div class="path-head">
+            <div>
+              <h3>Enter Code</h3>
+              <p>This is the only place to enter codes. Codes are shown after passing lessons, finals, spread tests, advanced tests, and accepted story readings.</p>
+            </div>
+          </div>
+          <div class="code-form-card">
+            <strong>Four-character code</strong>
+            <p>Letters and numbers work. Spaces and dashes are ignored.</p>
+            <form class="code-form" id="codeForm">
+              <input id="codeInput" type="text" maxlength="7" autocomplete="off" inputmode="text" placeholder="A1B2" aria-label="Progress code">
+              <button class="button" type="submit">Apply Code</button>
+            </form>
+            <div class="code-feedback ${codeFeedback?.type || ""}" id="codeFeedback">${codeFeedback?.message || ""}</div>
+          </div>
+          <div class="path-head" style="margin-top:22px">
+            <div>
+              <h3>Earned Codes</h3>
+              <p>${earned.length ? "These are your completed-section codes for use on another device." : "Pass a lesson, final, spread test, advanced test, or story reading to earn your first code."}</p>
+            </div>
+          </div>
+          <div class="code-list">
+            ${earned.length ? earned.map(codeEntryHTML).join("") : `
+              <div class="status-item"><strong>No codes earned yet.</strong> Complete a section and the code will appear here.</div>
+            `}
+          </div>
+        </section>
+      `;
+
+      els.mainStage.querySelector("#codeForm").addEventListener("submit", handleCodeSubmit);
+      const input = els.mainStage.querySelector("#codeInput");
+      input.addEventListener("input", () => {
+        input.value = normalizeCodeInput(input.value);
+      });
+    }
+
+    function codeEntryHTML(entry) {
+      return `
+        <article class="code-entry-card">
+          <strong>${entry.label}</strong>
+          <span class="code-value">${entry.code}</span>
+          <p>${entry.description}</p>
+        </article>
+      `;
+    }
+
+    function handleCodeSubmit(event) {
+      event.preventDefault();
+      const input = els.mainStage.querySelector("#codeInput");
+      const code = normalizeCodeInput(input?.value || "");
+      if (code.length !== 4) {
+        codeFeedback = {
+          type: "bad",
+          message: "Enter a four-character code."
+        };
+        render();
+        return;
+      }
+
+      const entry = codeEntryForCode(code);
+      if (!entry) {
+        codeFeedback = {
+          type: "bad",
+          message: "That code does not match a Cartomancy Coach milestone."
+        };
+        render();
+        return;
+      }
+
+      const wasEarned = entry.isEarned();
+      entry.apply();
+      codeFeedback = {
+        type: "good",
+        message: wasEarned ? `${entry.label} was already applied.` : `${entry.label} applied.`
+      };
+      saveState();
+      render();
+    }
+
     function meaningSuitSectionHTML(suit) {
       return `
         <section class="meaning-suit-section" style="--suit-color:${suit.color}">
@@ -3248,7 +3578,7 @@
             <p>Study the card beneath the keyword: emotional subtext, material leverage, effort patterns, pressure points, and the shadow side of each card.</p>
             <div class="hero-actions">
               <button class="button" type="button" id="startAdvancedPath">${advancedComplete() ? "Retake Advanced Final" : "Continue Advanced"}</button>
-              <button class="button secondary" type="button" id="openReadingsButton" ${advancedComplete() ? "" : "disabled"}>Story Readings</button>
+              <button class="button secondary" type="button" id="openReadingsButton" ${readingsUnlocked() ? "" : "disabled"}>Story Readings</button>
             </div>
           </div>
           <div class="deck-fan" aria-hidden="true">
@@ -3339,7 +3669,7 @@
     }
 
     function renderReadingPracticeStage() {
-      if (!advancedComplete()) {
+      if (!readingsUnlocked()) {
         renderReadingsLockedStage();
         return;
       }
@@ -3505,6 +3835,10 @@
         renderMeaningsGuide();
         return;
       }
+      if (state.currentSection === "codes") {
+        renderCodesGuide();
+        return;
+      }
       if (state.currentSection === "spreads") {
         renderSpreadsGuide();
         return;
@@ -3632,6 +3966,39 @@
         </div>
         <div class="sources">
           <p>Meaning notes combine traditional and modern playing-card cartomancy sources, including Grand Orient, Playing Card Meanings, Art of Cartomancy, Cardarium, Art Is My Magic, and Horoscope.com.</p>
+        </div>
+      `;
+    }
+
+    function renderCodesGuide() {
+      const earnedCount = codeEntries().filter((entry) => entry.isEarned()).length;
+      els.studyGuide.innerHTML = `
+        <div class="guide-head">
+          <h2>Code Guide</h2>
+          <p>Four-character codes are old-school progress passwords for moving milestones between devices.</p>
+        </div>
+        <div class="guide-body">
+          <div class="review-card">
+            <h3>Earned</h3>
+            <div class="review-stats">
+              <div class="review-stat">
+                <strong>${earnedCount}</strong>
+                <span>Codes</span>
+              </div>
+              <div class="review-stat">
+                <strong>4</strong>
+                <span>Chars</span>
+              </div>
+            </div>
+          </div>
+          <div class="theme-card">
+            <h3>How It Works</h3>
+            <p>Each code unlocks one milestone, such as a suit lesson, perfect suit final, all-suits final, spread test, or advanced test. It does not contain your full encrypted save file.</p>
+          </div>
+          <div class="theme-card">
+            <h3>Across Devices</h3>
+            <p>Open the Codes section on the new device, enter the codes you earned, and the matching progress will be applied to that profile.</p>
+          </div>
         </div>
       `;
     }
@@ -4415,6 +4782,7 @@
               <span>XP</span>
             </div>
           </div>
+          ${codeAwardHTML(codeEntryForSession(session, passed))}
           <div class="hero-actions">
             <button class="button" type="button" id="resultContinue">${isReview ? "Back to guide" : passed ? "Back to path" : "Study path"}</button>
             <button class="button secondary" type="button" id="resultRetry">Retry</button>
@@ -4437,6 +4805,41 @@
         }
       });
       renderHud();
+    }
+
+    function codeEntryForSession(session, passed) {
+      if (!passed || session.mode === "review") {
+        return null;
+      }
+      if (session.mode === "lesson") {
+        if (session.level.final && session.correct === session.questions.length) {
+          return codeEntryForKey(`perfect:${session.suitKey}`);
+        }
+        return codeEntryForKey(`lesson:${session.suitKey}:${session.level.key}`);
+      }
+      if (session.mode === "all-final") {
+        return codeEntryForKey("all-final:perfect");
+      }
+      if (session.mode === "advanced") {
+        return codeEntryForKey(`advanced:${session.level.key}`);
+      }
+      if (session.mode === "spread") {
+        return codeEntryForKey(`spread:${session.level.key}`);
+      }
+      return null;
+    }
+
+    function codeAwardHTML(entry) {
+      if (!entry) {
+        return "";
+      }
+      return `
+        <div class="code-award">
+          <strong>Progress Code</strong>
+          <span class="code-value">${entry.code}</span>
+          <p>${entry.description} Use this in the Codes section on another device.</p>
+        </div>
+      `;
     }
 
     function sessionPassed(session) {
@@ -4551,11 +4954,13 @@
       renderHud();
       renderReadingGuide();
 
+      const storyCode = scored.passed ? codeEntryForKey("story:first") : null;
       result.className = `story-result active ${scored.passed ? "good" : "bad"}`;
       result.innerHTML = `
         <strong>${scored.passed ? "Reading accepted" : scored.close ? "Close, but strengthen it" : "Needs more card evidence"}</strong>
         <p>${scored.message}</p>
         <p><strong>Matched cards:</strong> ${scored.perCard.map((item) => `${item.card.label} (${item.hits.length ? item.hits.join(", ") : "no clear hit"})`).join("; ")}</p>
+        ${codeAwardHTML(storyCode)}
       `;
     }
 
