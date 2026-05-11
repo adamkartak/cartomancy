@@ -383,6 +383,15 @@
       padding: 14px;
     }
 
+    .section-divider {
+      margin: 6px 2px 0;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
     .suit-button {
       width: 100%;
       min-width: 0;
@@ -410,6 +419,11 @@
       background: #ffffff;
       background: linear-gradient(135deg, color-mix(in srgb, var(--suit-color), #ffffff 86%), #ffffff);
       box-shadow: inset 4px 0 0 var(--suit-color), 0 10px 24px rgba(38, 31, 23, 0.09);
+    }
+
+    .suit-button.locked {
+      color: #858985;
+      background: #e8eeeb;
     }
 
     .suit-glyph {
@@ -838,6 +852,140 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 9px;
+    }
+
+    .status-list,
+    .note-list {
+      display: grid;
+      gap: 9px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .status-item,
+    .note-item {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 11px;
+      color: #46504b;
+      background: rgba(255, 255, 255, 0.78);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .status-item strong,
+    .note-item strong {
+      color: var(--ink);
+    }
+
+    .spread-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .spread-card,
+    .story-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #ffffff;
+      min-width: 0;
+    }
+
+    .spread-card h4,
+    .story-card h4 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .spread-card p,
+    .story-card p {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .spread-positions,
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .spread-positions span,
+    .pill-row span {
+      border: 1px solid color-mix(in srgb, var(--active-color), #ffffff 54%);
+      border-radius: 999px;
+      padding: 6px 8px;
+      color: #36413c;
+      background: color-mix(in srgb, var(--active-color), #ffffff 88%);
+      font-size: 0.74rem;
+      font-weight: 850;
+    }
+
+    .story-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .story-card {
+      text-align: center;
+    }
+
+    .story-card img {
+      width: min(92px, 100%);
+      margin: 0 auto 10px;
+      border-radius: 5px;
+      filter: drop-shadow(0 10px 13px rgba(31, 36, 42, 0.14));
+    }
+
+    .story-input {
+      width: 100%;
+      min-height: 170px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 13px;
+      color: var(--ink);
+      background: #ffffff;
+      font: inherit;
+      line-height: 1.45;
+    }
+
+    .story-input:focus {
+      outline: none;
+      border-color: var(--active-color);
+      box-shadow: var(--focus);
+    }
+
+    .story-result {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #ffffff;
+      line-height: 1.48;
+    }
+
+    .story-result.active {
+      display: block;
+    }
+
+    .story-result.good {
+      border-color: var(--accent);
+      background: #e9f6f0;
+    }
+
+    .story-result.bad {
+      border-color: var(--danger);
+      background: #f9e7ea;
     }
 
     .study-card {
@@ -1323,6 +1471,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .section-divider {
+        grid-column: 1 / -1;
+      }
+
       .hero {
         grid-template-columns: 1fr;
       }
@@ -1337,6 +1489,11 @@
 
       .lesson-path {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .spread-grid,
+      .story-cards {
+        grid-template-columns: 1fr;
       }
 
       .lesson-body {
@@ -1399,6 +1556,8 @@
       .suit-list,
       .lesson-path,
       .answers,
+      .spread-grid,
+      .story-cards,
       .result-stats {
         grid-template-columns: 1fr;
       }
@@ -1489,7 +1648,7 @@
         <div class="brand-mark" aria-hidden="true">&hearts;</div>
         <div>
           <h1>Cartomancy Coach</h1>
-          <p>A 52-card deck trainer with suit paths, drills, final tests, and saved progress.</p>
+          <p>A 52-card deck trainer with suit paths, final challenges, spreads, and story readings.</p>
         </div>
       </div>
       <div class="hud" aria-label="Player progress">
@@ -1517,7 +1676,7 @@
       <aside class="panel section-rail" aria-label="Suit sections">
         <div class="rail-head">
           <h2>Sections</h2>
-          <p>Pick a suit, finish four lessons, then pass the suit final.</p>
+          <p>Pick a suit, challenge a final early, study spreads, then unlock advanced readings.</p>
         </div>
         <div class="suit-list" id="suitList"></div>
       </aside>
@@ -1677,6 +1836,84 @@
       }
     };
 
+    const ADVANCED_MEANINGS = {
+      H: {
+        A: ["A home, love-letter, or emotional gate opening. In deep work it is not only romance; it is the place where trouble lifts and the heart feels safe enough to begin.", "heart threshold"],
+        "2": ["A living alliance: engagement, warm partnership, mutual support, and the strength that comes from being met rather than merely desired.", "mutual shelter"],
+        "3": ["Joy if the field is favorable, but divided feeling if the field is stressed. It can be celebration, a third influence, or the question of who the heart truly chooses.", "divided joy"],
+        "4": ["Emotional security changes location: home, business, routine, travel, or a move. In relationships it asks whether comfort is becoming a container or a cage.", "moving home"],
+        "5": ["Jealousy, ill will, and emotional weather around the querent. Deeply, this is the card of feelings contaminated by comparison or fear of losing place.", "jealous weather"],
+        "6": ["Sudden kindness, good luck, and someone taking warm interest. It often marks care arriving through action, not speeches.", "warm intervention"],
+        "7": ["Fickle affection, lovesickness, or unreliable interest. The deeper lesson is not to confuse intensity, fantasy, and availability.", "fickle longing"],
+        "8": ["An invitation, visit, gift, or social opening. This is affection becoming visible through a knock at the door, a message, or a gathering.", "welcome signal"],
+        "9": ["The wish card of the heart. Read the neighboring or preceding card to learn what is desired, because this card amplifies longing into expectation.", "heart's wish"],
+        "0": ["Good fortune after difficulty: emotional completion, public happiness, family blessing, or a relationship step that feels like arrival.", "happy arrival"],
+        J: ["A warm-hearted friend, admirer, or younger person who is willing to show feeling. Deeply, affection travels through a personal message.", "open admirer"],
+        Q: ["Kind advice, maternal care, emotional intelligence, and protection. In shadow she can over-identify with another person's feelings.", "kind counsel"],
+        K: ["Helpful affection shown through deeds. This figure may say little, but care appears through protection, fairness, and practical kindness.", "quiet devotion"]
+      },
+      D: {
+        A: ["A message, gift, document, or improvement that changes the practical facts. In love it can be the text, token, or offer that makes feeling concrete.", "concrete message"],
+        "2": ["Partnership with a transaction inside it: business alliance, change in relationship, gossip, or a love affair that must be handled carefully.", "charged exchange"],
+        "3": ["Legal letters, disputes, tact, and the need to avoid escalation. Deeply, words become binding, so diplomacy matters more than being right.", "binding words"],
+        "4": ["Financial upswing, good advice from an older person, and the building of a stable base. It asks who or what can be trusted with value.", "trusted base"],
+        "5": ["Improvement, birth, new projects, and a change for the better. This is practical luck becoming fertile, productive, or home-building.", "fertile improvement"],
+        "6": ["Arguments, relationship trouble, and possible separation. It often shows money, duty, or unequal effort becoming the visible excuse for distance.", "costly friction"],
+        "7": ["A quarrel over money or work that can still resolve well. Deeply, it tests whether value is being argued over or actually understood.", "value quarrel"],
+        "8": ["New job, altered routine, travel, or an unexpected romance while moving between places. It is a practical road that changes the heart by accident.", "road romance"],
+        "9": ["Business deal, travel, restlessness, or change of residence. The deeper tone is displacement: prosperity may require leaving the familiar.", "restless gain"],
+        "0": ["A change in financial status, often upward. It marks the visible result of choices, contracts, and material momentum finally landing.", "status shift"],
+        J: ["A messenger who may be unreliable, jealous, uniformed, or self-interested. The news is usually minor but still changes the atmosphere.", "unsteady messenger"],
+        Q: ["Social appetite, gossip, charm, and desire. In deep work she asks whether attraction, image, or talk is steering the situation.", "social appetite"],
+        K: ["Status, authority, influence, and the person who controls access to resources. He can help, block, sponsor, or judge the practical outcome.", "material authority"]
+      },
+      C: {
+        A: ["A fortune gate: money, gift, success, protection, and the power to obtain what is wanted. With hearts it can become wealthy marriage, love letter, or desire made tangible.", "fortune gate"],
+        "2": ["Obstacle, gossip, and disappointment around a goal. In relationship work it warns that talk around the connection may matter as much as the connection itself.", "gossip barrier"],
+        "3": ["Growth, opportunity, love and happiness, successful marriage, or a favorable long-term proposition. This is one of the clearest clubs-romance cards.", "growing bond"],
+        "4": ["Compromise, communication, travel by car, and seeing another person's side; older lists also warn against blind trust. Talk, but verify.", "careful compromise"],
+        "5": ["New friendships, alliances, self-worth, and independent support. In love it can show two people staying whole while choosing each other.", "chosen alliance"],
+        "6": ["Success, aid, responsibility, and major communication. In relationships it asks whether both people are fulfilling their duties to the bond.", "responsible talk"],
+        "7": ["Business success, promotion, discussion, and problems with the opposite sex. In love it asks: work on it, argue it out, or walk away?", "relationship trial"],
+        "8": ["Work, routine, jealousy, and a rut. If this appears in romance, the daily pattern or job pressure may be the relationship issue.", "routine jealousy"],
+        "9": ["Achievement, admirer, windfall, wealthy marriage, distance, or a chance to get away together. It can show love growing across space.", "distant admirer"],
+        "0": ["Fortune, business success, travel, future gain, and a journey that can bring a friend or love interest. In love it often shows physical distance or a getaway.", "fortunate journey"],
+        J: ["A playful, good-hearted, fiery youth, loyal friend, messenger, or admirer. This person brings movement and contact rather than solemn commitment.", "playful admirer"],
+        Q: ["A confident, dark or fiery woman, good adviser, social ally, or self-possessed friend. Her love language is competence, candor, and momentum.", "confident ally"],
+        K: ["An upright, faithful, affectionate, generous, spirited man. In romance he may show devotion through enterprise, protection, work, and practical follow-through.", "faithful builder"]
+      },
+      S: {
+        A: ["A decisive ending, misfortune, or hard beginning. Deeply it is the cut that tells the truth, even when the truth arrives as loss.", "fateful cut"],
+        "2": ["Break, deceit, conflict, divided loyalty, or a process interrupted. In love it is a warning card for separation or a split path.", "split path"],
+        "3": ["Bad news, stress, heartbreak, or a third person breaking into the field. It names the wound so the reading can stop pretending.", "third wound"],
+        "4": ["Small illness, worry, financial low, rest, or enforced pause. It asks for recovery before action.", "forced pause"],
+        "5": ["Opposition and temporary obstacles that may become a blessing. What leaves now may clear a poisoned pattern.", "hidden blessing"],
+        "6": ["Small improvements and transition. This is not triumph; it is the first sign that the pressure is beginning to move.", "slow improvement"],
+        "7": ["Bad advice, loss, internal obstacle, or trouble that grows from the querent's own blind spot. It asks for discernment.", "bad counsel"],
+        "8": ["Temptation, danger, upset, or a situation requiring quick caution. The deeper reading is do not drift; choose consciously.", "danger point"],
+        "9": ["Illness, accident, grief, worry, or personal low. It can be the mind and body signaling that something cannot continue unchanged.", "low point"],
+        "0": ["Worry, bad news, grief, and too much responsibility. The card compresses pressure until a release, confession, or ending becomes necessary.", "heavy news"],
+        J: ["A hostile, jealous, sharp, or disruptive youth. He can be the message no one wants but everyone needs to hear.", "hostile messenger"],
+        Q: ["A severe, widowed, divorced, malicious, or grief-hardened woman. Deeply, she shows pain turned into distance, control, or judgment.", "grief hardened"],
+        K: ["A dark, ambitious, self-serving, or rule-bound man. He can enforce order, but may put status, control, or victory above care.", "cold authority"]
+      }
+    };
+
+    const ADVANCED_SUIT_NOTES = {
+      H: "Hearts-heavy readings are not automatically easy; they show the emotional field. Look for whether the heart is supported, divided, jealous, welcomed, or fulfilled.",
+      D: "Diamonds-heavy readings make the relationship practical: messages, gifts, contracts, value, gossip, travel, work, status, and the material cost of choices.",
+      C: "Clubs-heavy readings can absolutely be romance. Clubs show the bond in action: communication, alliance, self-worth, effort, travel, distance, social movement, chemistry, and future-building.",
+      S: "Spades-heavy readings show pressure around the question: separation, stress, obstacles, bad advice, grief, endings, or the decision that cannot be avoided."
+    };
+
+    const SECTION_META = {
+      suit: { key: "suit", name: "Suit Path", glyph: "&hearts;", color: "#238b68" },
+      all: { key: "all", name: "All Suits Final", glyph: "F", color: "#8b651a" },
+      spreads: { key: "spreads", name: "Spreads", glyph: "S", color: "#2b6f99" },
+      advanced: { key: "advanced", name: "Advanced", glyph: "A", color: "#6f5b95" },
+      readings: { key: "readings", name: "Story Readings", glyph: "R", color: "#7a633a" }
+    };
+
     const LEVELS = [
       {
         key: "level1",
@@ -1727,7 +1964,157 @@
       }
     ];
 
+    const ALL_FINAL_LEVEL = {
+      key: "all-final",
+      title: "All Suits Final",
+      deck: VALUES,
+      copy: "A perfect 52-card challenge that completes every suit path.",
+      questionCount: 52,
+      xp: 140,
+      final: true,
+      perfectRequired: true
+    };
+
+    const ADVANCED_LEVELS = [
+      {
+        key: "advanced-H",
+        num: "H",
+        title: "Deep Hearts",
+        suitKey: "H",
+        copy: "Emotional subtext, bonds, repair, longing, and relational shadows.",
+        questionCount: 13,
+        xp: 36
+      },
+      {
+        key: "advanced-D",
+        num: "D",
+        title: "Deep Diamonds",
+        suitKey: "D",
+        copy: "Value, exchange, contracts, money pressure, and material leverage.",
+        questionCount: 13,
+        xp: 36
+      },
+      {
+        key: "advanced-C",
+        num: "C",
+        title: "Deep Clubs",
+        suitKey: "C",
+        copy: "Skill, ambition, messages, creative pressure, and practical growth.",
+        questionCount: 13,
+        xp: 36
+      },
+      {
+        key: "advanced-S",
+        num: "S",
+        title: "Deep Spades",
+        suitKey: "S",
+        copy: "Pressure, endings, hard choices, recovery, fate, and clear boundaries.",
+        questionCount: 13,
+        xp: 36
+      },
+      {
+        key: "advanced-final",
+        num: "AF",
+        title: "Advanced Final",
+        suitKey: null,
+        copy: "Deep meanings from the whole deck.",
+        questionCount: 32,
+        xp: 90,
+        final: true
+      }
+    ];
+
+    const SPREADS = [
+      {
+        key: "three-card-line",
+        title: "Three-Card Story Line",
+        cards: 3,
+        positions: ["Root", "Turn", "Direction"],
+        when: "Fast daily readings and practice stories.",
+        method: "Read it like a sentence: card one names the root, card two shows the active turn, card three shows where the matter is moving.",
+        cartomancy: "This fits playing-card cartomancy because number and suit create a compact fortune-telling line."
+      },
+      {
+        key: "crossroads-pair",
+        title: "Crossroads Pair",
+        cards: 5,
+        positions: ["Option A", "Option B", "Cost", "Gift", "Anchor"],
+        when: "Decisions where both paths are real.",
+        method: "Compare the two option cards first, then read cost and gift as consequences. The anchor shows what must stay steady.",
+        cartomancy: "Pairs are useful with playing cards because red-black contrast and matching numbers can show quick yes/no tension."
+      },
+      {
+        key: "suit-compass",
+        title: "Suit Compass",
+        cards: 4,
+        positions: ["Heart", "Diamond", "Club", "Spade"],
+        when: "Finding which life area is driving the question.",
+        method: "Lay one card for each suit-house. The strongest or most difficult card shows the loudest arena.",
+        cartomancy: "This is built for a 52-card deck: each suit becomes a house of life rather than only a card category."
+      },
+      {
+        key: "nine-card-tableau",
+        title: "Nine-Card Tableau",
+        cards: 9,
+        positions: ["Past", "Present", "Near future", "Support", "Center", "Challenge", "Hidden", "Advice", "Outcome"],
+        when: "Questions with moving parts and people involved.",
+        method: "Read rows as time, columns as pressure, and the center as the heart of the reading. Corners color the whole story.",
+        cartomancy: "Tableau-style reading is especially cartomantic: proximity, rows, columns, color, and suit clusters all matter."
+      },
+      {
+        key: "fortune-horseshoe",
+        title: "Fortune Horseshoe",
+        cards: 7,
+        positions: ["Past", "Now", "Hidden", "Obstacle", "Advice", "Near future", "Outcome"],
+        when: "Traditional fortune readings with a clear arc.",
+        method: "Move left to right. The hidden card explains what the questioner does not see; advice shows the practical response.",
+        cartomancy: "This spread is not exclusive to playing cards, but it works well because the suits keep the reading grounded."
+      },
+      {
+        key: "house-tableau",
+        title: "Twelve-House Cartomancy Tableau",
+        cards: 12,
+        positions: ["Self", "Money", "Messages", "Home", "Love", "Work", "Others", "Change", "Travel", "Career", "Friends", "Fate"],
+        when: "A broad life check-in.",
+        method: "Each position is a house. Read the card through that house, then scan for repeated suits, repeated values, red-black balance, and court cards.",
+        cartomancy: "This borrows the house idea used in old fortune-telling systems and adapts it directly to playing-card suits."
+      }
+    ];
+
+    const SPREAD_LEVELS = [
+      {
+        key: "spread-basics",
+        num: "1",
+        title: "Spread Basics",
+        copy: "Three-card line, pairs, and suit-house thinking.",
+        spreadKeys: ["three-card-line", "crossroads-pair", "suit-compass"],
+        questionCount: 9,
+        xp: 18
+      },
+      {
+        key: "spread-tableaus",
+        num: "2",
+        title: "Tableaus",
+        copy: "Rows, columns, houses, centers, and corner pressure.",
+        spreadKeys: ["nine-card-tableau", "house-tableau"],
+        questionCount: 8,
+        xp: 20
+      },
+      {
+        key: "spread-fortune",
+        num: "3",
+        title: "Fortune Lines",
+        copy: "Horseshoe arcs, hidden cards, advice, and outcome logic.",
+        spreadKeys: ["fortune-horseshoe", "three-card-line", "nine-card-tableau"],
+        questionCount: 9,
+        xp: 22
+      }
+    ];
+
+    const STORY_CONNECTORS = ["because", "then", "after", "but", "while", "therefore", "so", "leads", "reveals", "suggests", "turns", "moves"];
+
     const DEFAULT_STATE = {
+      currentSection: "suit",
       currentSuit: "H",
       xp: 0,
       streak: 0,
@@ -1738,6 +2125,19 @@
         C: {},
         S: {}
       },
+      perfectFinals: {
+        H: false,
+        D: false,
+        C: false,
+        S: false,
+        all: false
+      },
+      completedAdvanced: {},
+      completedSpreads: {},
+      readingPractice: {
+        passed: 0,
+        attempts: 0
+      },
       review: {
         cards: {}
       }
@@ -1745,6 +2145,7 @@
 
     let state = freshDefaultState();
     let activeSession = null;
+    let activeReading = null;
     let saveQueue = Promise.resolve();
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
@@ -1804,6 +2205,22 @@
         completed: {
           ...base.completed,
           ...(stored.completed || {})
+        },
+        perfectFinals: {
+          ...base.perfectFinals,
+          ...(stored.perfectFinals || {})
+        },
+        completedAdvanced: {
+          ...base.completedAdvanced,
+          ...(stored.completedAdvanced || {})
+        },
+        completedSpreads: {
+          ...base.completedSpreads,
+          ...(stored.completedSpreads || {})
+        },
+        readingPractice: {
+          ...base.readingPractice,
+          ...(stored.readingPractice || {})
         },
         review: {
           ...base.review,
@@ -2017,6 +2434,7 @@
     async function lockProfile() {
       await saveState();
       activeSession = null;
+      activeReading = null;
       auth.unlocked = false;
       auth.key = null;
       auth.salt = "";
@@ -2033,6 +2451,7 @@
       }
       localStorage.removeItem(SECURE_STORAGE_KEY);
       state = freshDefaultState();
+      activeReading = null;
       updateLoginScreen();
       showToast("Encrypted profile reset.");
     }
@@ -2062,6 +2481,16 @@
       };
     }
 
+    function advancedCardData(suitKey, value) {
+      const base = cardData(suitKey, value);
+      const [deep, deepKeyword] = ADVANCED_MEANINGS[suitKey][value];
+      return {
+        ...base,
+        deep,
+        deepKeyword
+      };
+    }
+
     function parseCardCode(code) {
       const suitKey = code.slice(-1);
       const value = code.slice(0, -1);
@@ -2070,6 +2499,14 @@
 
     function getAllCards() {
       return Object.keys(SUITS).flatMap((suitKey) => VALUES.map((value) => cardData(suitKey, value)));
+    }
+
+    function getAllAdvancedCards() {
+      return Object.keys(SUITS).flatMap((suitKey) => VALUES.map((value) => advancedCardData(suitKey, value)));
+    }
+
+    function getSpread(key) {
+      return SPREADS.find((spread) => spread.key === key);
     }
 
     function shuffle(items) {
@@ -2094,7 +2531,48 @@
       return Object.keys(SUITS).reduce((sum, suitKey) => sum + completedCount(suitKey), 0);
     }
 
+    function perfectSuitCount() {
+      return Object.keys(SUITS).filter((suitKey) => state.perfectFinals?.[suitKey]).length;
+    }
+
+    function spreadCompletedCount() {
+      return SPREAD_LEVELS.filter((level) => state.completedSpreads?.[level.key]).length;
+    }
+
+    function advancedCompletedCount() {
+      return ADVANCED_LEVELS.filter((level) => state.completedAdvanced?.[level.key]).length;
+    }
+
+    function advancedUnlocked() {
+      return Object.keys(SUITS).every((suitKey) => state.perfectFinals?.[suitKey]) && Boolean(state.perfectFinals?.all);
+    }
+
+    function advancedComplete() {
+      return ADVANCED_LEVELS.every((level) => state.completedAdvanced?.[level.key]);
+    }
+
+    function completeSuit(suitKey, perfect = false) {
+      if (!state.completed[suitKey]) {
+        state.completed[suitKey] = {};
+      }
+      LEVELS.forEach((level) => {
+        state.completed[suitKey][level.key] = true;
+      });
+      if (perfect) {
+        state.perfectFinals[suitKey] = true;
+      }
+      syncReviewCards();
+    }
+
+    function completeAllSuitsPerfect() {
+      Object.keys(SUITS).forEach((suitKey) => completeSuit(suitKey, true));
+      state.perfectFinals.all = true;
+    }
+
     function isUnlocked(suitKey, levelIndex) {
+      if (LEVELS[levelIndex]?.final) {
+        return true;
+      }
       if (levelIndex === 0) {
         return true;
       }
@@ -2187,9 +2665,23 @@
       return `${Math.ceil(hours / 24)} days`;
     }
 
+    function currentTheme() {
+      if (state.currentSection === "suit") {
+        return {
+          name: SUITS[state.currentSuit].name,
+          color: SUITS[state.currentSuit].color
+        };
+      }
+      const section = SECTION_META[state.currentSection] || SECTION_META.suit;
+      return {
+        name: section.name,
+        color: section.color
+      };
+    }
+
     function render() {
-      const suit = SUITS[state.currentSuit];
-      document.documentElement.style.setProperty("--active-color", suit.color);
+      const theme = currentTheme();
+      document.documentElement.style.setProperty("--active-color", theme.color);
       if (syncReviewCards()) {
         saveState();
       }
@@ -2206,10 +2698,11 @@
     }
 
     function renderSuitList() {
-      els.suitList.innerHTML = Object.values(SUITS).map((suit) => {
+      const suitButtons = Object.values(SUITS).map((suit) => {
         const done = completedCount(suit.key);
         const progress = Math.round((done / LEVELS.length) * 100);
-        const active = state.currentSuit === suit.key ? " active" : "";
+        const active = state.currentSection === "suit" && state.currentSuit === suit.key ? " active" : "";
+        const perfect = state.perfectFinals?.[suit.key] ? "100%" : `${done}/5`;
         return `
           <button class="suit-button${active}" type="button" data-suit="${suit.key}" style="--suit-color:${suit.color};--progress:${progress}%">
             <span class="suit-glyph">${suit.glyph}</span>
@@ -2217,22 +2710,82 @@
               <strong>${suit.name}</strong>
               <span>${suit.domain}</span>
             </span>
-            <span class="completion">${done}/5</span>
+            <span class="completion">${perfect}</span>
             <span class="progress-track" aria-hidden="true"><span class="progress-fill"></span></span>
           </button>
         `;
       }).join("");
 
+      const advancedStatus = advancedUnlocked() ? `${advancedCompletedCount()}/${ADVANCED_LEVELS.length}` : "Locked";
+      const readingsStatus = advancedComplete() ? `${state.readingPractice?.passed || 0} done` : "Locked";
+      const specialButtons = [
+        specialSectionButtonHTML("all", state.perfectFinals?.all ? "100%" : `${perfectSuitCount()}/4`, "Perfect challenge across all 52 cards."),
+        specialSectionButtonHTML("spreads", `${spreadCompletedCount()}/${SPREAD_LEVELS.length}`, "Learn cartomancy layouts and spread logic."),
+        specialSectionButtonHTML("advanced", advancedStatus, "Deep card meanings unlock after perfect finals."),
+        specialSectionButtonHTML("readings", readingsStatus, "Practice three-card story readings.")
+      ].join("");
+
+      els.suitList.innerHTML = `
+        ${suitButtons}
+        <div class="section-divider">Challenges</div>
+        ${specialButtons}
+      `;
+
       els.suitList.querySelectorAll("[data-suit]").forEach((button) => {
         button.addEventListener("click", () => {
+          state.currentSection = "suit";
           state.currentSuit = button.dataset.suit;
+          saveState();
+          render();
+        });
+      });
+      els.suitList.querySelectorAll("[data-section]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.currentSection = button.dataset.section;
           saveState();
           render();
         });
       });
     }
 
+    function specialSectionButtonHTML(sectionKey, status, description) {
+      const section = SECTION_META[sectionKey];
+      const active = state.currentSection === sectionKey ? " active" : "";
+      const locked = (sectionKey === "advanced" && !advancedUnlocked()) || (sectionKey === "readings" && !advancedComplete());
+      return `
+        <button class="suit-button${active}${locked ? " locked" : ""}" type="button" data-section="${sectionKey}" style="--suit-color:${section.color};--progress:${status === "100%" ? 100 : 0}%">
+          <span class="suit-glyph">${section.glyph}</span>
+          <span class="suit-name">
+            <strong>${section.name}</strong>
+            <span>${description}</span>
+          </span>
+          <span class="completion">${status}</span>
+          <span class="progress-track" aria-hidden="true"><span class="progress-fill"></span></span>
+        </button>
+      `;
+    }
+
     function renderMainStage() {
+      if (state.currentSection === "all") {
+        renderAllFinalStage();
+        return;
+      }
+      if (state.currentSection === "spreads") {
+        renderSpreadsStage();
+        return;
+      }
+      if (state.currentSection === "advanced") {
+        renderAdvancedStage();
+        return;
+      }
+      if (state.currentSection === "readings") {
+        renderReadingPracticeStage();
+        return;
+      }
+      renderSuitStage();
+    }
+
+    function renderSuitStage() {
       const suitKey = state.currentSuit;
       const suit = SUITS[suitKey];
       const nextIndex = nextLevelIndex(suitKey);
@@ -2247,6 +2800,7 @@
             <p>${suit.lessonCopy}</p>
             <div class="hero-actions">
               <button class="button" type="button" id="continueButton">${nextIndex >= 0 ? `Start ${currentLevel.title}` : "Review Final"}</button>
+              <button class="button secondary" type="button" id="takeSuitFinalButton">Take Suit Final</button>
               <button class="button secondary" type="button" id="openGuideButton">Study Cards</button>
             </div>
           </div>
@@ -2260,7 +2814,7 @@
           <div class="path-head">
             <div>
               <h3>Learning Path</h3>
-              <p>Each suit has four lessons and a final test. Finals unlock after all four lessons.</p>
+              <p>Each suit has four lessons and a final. You can take the final anytime; a 100% score completes that whole suit.</p>
             </div>
             <button class="reset-button" type="button" id="resetProgress">Reset progress</button>
           </div>
@@ -2274,6 +2828,9 @@
         const index = nextIndex >= 0 ? nextIndex : LEVELS.length - 1;
         startLesson(suitKey, LEVELS[index]);
       });
+      els.mainStage.querySelector("#takeSuitFinalButton").addEventListener("click", () => {
+        startLesson(suitKey, LEVELS[LEVELS.length - 1]);
+      });
       els.mainStage.querySelector("#openGuideButton").addEventListener("click", () => {
         document.querySelector("#studyGuide").scrollIntoView({ behavior: "smooth", block: "start" });
       });
@@ -2285,6 +2842,270 @@
             startLesson(suitKey, level);
           }
         });
+      });
+    }
+
+    function renderAllFinalStage() {
+      const perfect = Boolean(state.perfectFinals?.all);
+      els.mainStage.innerHTML = `
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>F</span> Whole Deck Challenge</p>
+            <h2>All Suits Final</h2>
+            <p>Take one perfect-score challenge across hearts, diamonds, clubs, and spades. A 100% score marks every suit lesson and every suit final complete.</p>
+            <div class="hero-actions">
+              <button class="button" type="button" id="startAllFinal">${perfect ? "Retake All-Suits Final" : "Start All-Suits Final"}</button>
+              <button class="button secondary" type="button" id="jumpAdvanced">Advanced Section</button>
+            </div>
+          </div>
+          <div class="deck-fan" aria-hidden="true">
+            ${Object.keys(SUITS).map((suitKey, index) => `
+              <img class="fan-card" src="${cardImage(cardCode(suitKey, ["A", "0", "Q", "K"][index]))}" alt="" style="--rotate:${(index - 1.5) * 10}deg;--lift:${Math.abs(index - 1.5) * 8}px">
+            `).join("")}
+          </div>
+        </section>
+        <section class="path">
+          <div class="path-head">
+            <div>
+              <h3>Perfect-Final Requirements</h3>
+              <p>Advanced card meanings open after all suit finals and the all-suits final are perfect.</p>
+            </div>
+          </div>
+          <ul class="status-list">
+            ${Object.values(SUITS).map((suit) => `
+              <li class="status-item"><strong>${suit.name} perfect final:</strong> ${state.perfectFinals?.[suit.key] ? "Complete" : "Needed"}</li>
+            `).join("")}
+            <li class="status-item"><strong>All-suits perfect final:</strong> ${state.perfectFinals?.all ? "Complete" : "Needed"}</li>
+          </ul>
+        </section>
+      `;
+
+      els.mainStage.querySelector("#startAllFinal").addEventListener("click", startAllFinal);
+      els.mainStage.querySelector("#jumpAdvanced").addEventListener("click", () => {
+        state.currentSection = "advanced";
+        saveState();
+        render();
+      });
+    }
+
+    function renderSpreadsStage() {
+      els.mainStage.innerHTML = `
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>S</span> Cartomancy Layouts</p>
+            <h2>Spreads</h2>
+            <p>Learn layouts that work especially well with playing cards: lines, pairs, suit houses, tableaus, and fortune arcs.</p>
+            <div class="hero-actions">
+              <button class="button" type="button" id="startSpreadPath">Start Spread Basics</button>
+            </div>
+          </div>
+          <div class="deck-fan" aria-hidden="true">
+            ${["AH", "2D", "7C", "QS", "0H"].map((code, index) => `
+              <img class="fan-card" src="${cardImage(code)}" alt="" style="--rotate:${(index - 2) * 9}deg;--lift:${Math.abs(index - 2) * 8}px">
+            `).join("")}
+          </div>
+        </section>
+        <section class="path">
+          <div class="path-head">
+            <div>
+              <h3>Spread Lessons</h3>
+              <p>Pass each test to prove you know when to use the layout and how to read its positions.</p>
+            </div>
+          </div>
+          <div class="lesson-path">
+            ${SPREAD_LEVELS.map((level) => spreadLevelNodeHTML(level)).join("")}
+          </div>
+          <div class="spread-grid" style="margin-top:18px">
+            ${SPREADS.map((spread) => spreadCardHTML(spread)).join("")}
+          </div>
+        </section>
+      `;
+
+      els.mainStage.querySelector("#startSpreadPath").addEventListener("click", () => {
+        const next = SPREAD_LEVELS.find((level) => !state.completedSpreads?.[level.key]) || SPREAD_LEVELS[0];
+        startSpreadLesson(next);
+      });
+      els.mainStage.querySelectorAll("[data-spread-level]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const level = SPREAD_LEVELS.find((item) => item.key === button.dataset.spreadLevel);
+          if (level) {
+            startSpreadLesson(level);
+          }
+        });
+      });
+    }
+
+    function renderAdvancedStage() {
+      if (!advancedUnlocked()) {
+        renderAdvancedLockedStage();
+        return;
+      }
+
+      els.mainStage.innerHTML = `
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>A</span> Advanced Meanings</p>
+            <h2>Deep Card Work</h2>
+            <p>Study the card beneath the keyword: emotional subtext, material leverage, effort patterns, pressure points, and the shadow side of each card.</p>
+            <div class="hero-actions">
+              <button class="button" type="button" id="startAdvancedPath">${advancedComplete() ? "Retake Advanced Final" : "Continue Advanced"}</button>
+              <button class="button secondary" type="button" id="openReadingsButton" ${advancedComplete() ? "" : "disabled"}>Story Readings</button>
+            </div>
+          </div>
+          <div class="deck-fan" aria-hidden="true">
+            ${["AH", "AD", "AC", "AS"].map((code, index) => `
+              <img class="fan-card" src="${cardImage(code)}" alt="" style="--rotate:${(index - 1.5) * 10}deg;--lift:${Math.abs(index - 1.5) * 8}px">
+            `).join("")}
+          </div>
+        </section>
+        <section class="path">
+          <div class="path-head">
+            <div>
+              <h3>Advanced Tests</h3>
+              <p>Pass all deep-meaning tests to unlock three-card story reading practice.</p>
+            </div>
+          </div>
+          <div class="lesson-path">
+            ${ADVANCED_LEVELS.map((level) => advancedLevelNodeHTML(level)).join("")}
+          </div>
+          <div class="path-head" style="margin-top:22px">
+            <div>
+              <h3>Deep Suit Rules</h3>
+              <p>Every suit has a deeper context layer. A suit cluster changes the whole flavor of a reading.</p>
+            </div>
+          </div>
+          <div class="spread-grid">
+            ${Object.values(SUITS).map((suit) => `
+              <article class="spread-card">
+                <h4>${suit.glyph} ${suit.name}</h4>
+                <p>${ADVANCED_SUIT_NOTES[suit.key]}</p>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+      `;
+
+      els.mainStage.querySelector("#startAdvancedPath").addEventListener("click", () => {
+        const next = ADVANCED_LEVELS.find((level) => !state.completedAdvanced?.[level.key]) || ADVANCED_LEVELS[ADVANCED_LEVELS.length - 1];
+        startAdvancedLesson(next);
+      });
+      els.mainStage.querySelector("#openReadingsButton").addEventListener("click", () => {
+        state.currentSection = "readings";
+        saveState();
+        render();
+      });
+      els.mainStage.querySelectorAll("[data-advanced-level]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const level = ADVANCED_LEVELS.find((item) => item.key === button.dataset.advancedLevel);
+          if (level) {
+            startAdvancedLesson(level);
+          }
+        });
+      });
+    }
+
+    function renderAdvancedLockedStage() {
+      els.mainStage.innerHTML = `
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>A</span> Locked</p>
+            <h2>Advanced Opens After Perfect Finals</h2>
+            <p>To open deep card meanings, score 100% on each suit final and 100% on the all-suits final. The all-suits final can complete every suit at once if you ace it.</p>
+            <div class="hero-actions">
+              <button class="button" type="button" id="goAllFinal">Take All-Suits Final</button>
+            </div>
+          </div>
+        </section>
+        <section class="path">
+          <div class="path-head">
+            <div>
+              <h3>Unlock Checklist</h3>
+              <p>Perfect means no missed questions in that final test.</p>
+            </div>
+          </div>
+          <ul class="status-list">
+            ${Object.values(SUITS).map((suit) => `
+              <li class="status-item"><strong>${suit.name} final:</strong> ${state.perfectFinals?.[suit.key] ? "100%" : "Still needed"}</li>
+            `).join("")}
+            <li class="status-item"><strong>All-suits final:</strong> ${state.perfectFinals?.all ? "100%" : "Still needed"}</li>
+          </ul>
+        </section>
+      `;
+
+      els.mainStage.querySelector("#goAllFinal").addEventListener("click", () => {
+        state.currentSection = "all";
+        saveState();
+        render();
+      });
+    }
+
+    function renderReadingPracticeStage() {
+      if (!advancedComplete()) {
+        renderReadingsLockedStage();
+        return;
+      }
+
+      if (!activeReading) {
+        activeReading = sample(getAllCards(), 3);
+      }
+
+      els.mainStage.innerHTML = `
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>R</span> Test Readings</p>
+            <h2>Tell the Three-Card Story</h2>
+            <p>Use the three cards as a connected reading. Your answer should include a theme from each card and explain how the situation moves from card one to card three.</p>
+            <div class="hero-actions">
+              <button class="button secondary" type="button" id="newReadingButton">New Reading</button>
+            </div>
+          </div>
+        </section>
+        <section class="path">
+          <div class="path-head">
+            <div>
+              <h3>Your Cards</h3>
+              <p>Write the story in your own words. This static checker looks for the main meanings and connection words.</p>
+            </div>
+          </div>
+          <div class="story-cards">
+            ${activeReading.map((card, index) => storyCardHTML(card, index)).join("")}
+          </div>
+          <div class="answer-area" style="margin-top:18px">
+            <textarea class="story-input" id="storyInput" placeholder="Tell the story these three cards make together..."></textarea>
+            <div class="hero-actions">
+              <button class="button" type="button" id="checkStoryButton">Check Story</button>
+              <button class="button secondary" type="button" id="showModelButton">Show Model Reading</button>
+            </div>
+            <div class="story-result" id="storyResult"></div>
+          </div>
+        </section>
+      `;
+
+      els.mainStage.querySelector("#newReadingButton").addEventListener("click", () => {
+        activeReading = sample(getAllCards(), 3);
+        render();
+      });
+      els.mainStage.querySelector("#checkStoryButton").addEventListener("click", checkStoryReading);
+      els.mainStage.querySelector("#showModelButton").addEventListener("click", showModelReading);
+    }
+
+    function renderReadingsLockedStage() {
+      els.mainStage.innerHTML = `
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span>R</span> Locked</p>
+            <h2>Story Readings Unlock After Advanced Tests</h2>
+            <p>Finish every advanced deep-meaning test first. Then this section gives you three random cards and checks whether your story uses all three cards correctly.</p>
+            <div class="hero-actions">
+              <button class="button" type="button" id="goAdvanced">Go to Advanced</button>
+            </div>
+          </div>
+        </section>
+      `;
+      els.mainStage.querySelector("#goAdvanced").addEventListener("click", () => {
+        state.currentSection = "advanced";
+        saveState();
+        render();
       });
     }
 
@@ -2315,7 +3136,88 @@
       `;
     }
 
+    function spreadLevelNodeHTML(level) {
+      const complete = Boolean(state.completedSpreads?.[level.key]);
+      return `
+        <button class="lesson-node${complete ? " complete" : ""}" type="button" data-spread-level="${level.key}">
+          <span class="node-top">
+            <span class="node-badge">${complete ? "&#10003;" : level.num}</span>
+            <span class="node-status">${complete ? "Done" : "Open"}</span>
+          </span>
+          <h4>${level.title}</h4>
+          <p>${level.copy}</p>
+          <span class="pill-row" aria-hidden="true">
+            ${level.spreadKeys.map((key) => `<span>${getSpread(key).cards} cards</span>`).join("")}
+          </span>
+        </button>
+      `;
+    }
+
+    function advancedLevelNodeHTML(level) {
+      const complete = Boolean(state.completedAdvanced?.[level.key]);
+      const values = level.suitKey ? ["A", "5", "0", "Q"] : ["A", "7", "0", "K"];
+      const suitKeys = level.suitKey ? [level.suitKey, level.suitKey, level.suitKey, level.suitKey] : ["H", "D", "C", "S"];
+      return `
+        <button class="lesson-node${level.final ? " final" : ""}${complete ? " complete" : ""}" type="button" data-advanced-level="${level.key}">
+          <span class="node-top">
+            <span class="node-badge">${complete ? "&#10003;" : level.num}</span>
+            <span class="node-status">${complete ? "Done" : "Open"}</span>
+          </span>
+          <h4>${level.title}</h4>
+          <p>${level.copy}</p>
+          <span class="mini-cards" aria-hidden="true">
+            ${values.map((value, index) => `
+              <img class="mini-card" src="${cardImage(cardCode(suitKeys[index], value))}" alt="" style="--r:${(index - 1.5) * 7}deg">
+            `).join("")}
+          </span>
+        </button>
+      `;
+    }
+
+    function spreadCardHTML(spread) {
+      return `
+        <article class="spread-card">
+          <h4>${spread.title}</h4>
+          <p>${spread.when}</p>
+          <p>${spread.method}</p>
+          <div class="spread-positions">
+            ${spread.positions.map((position) => `<span>${position}</span>`).join("")}
+          </div>
+        </article>
+      `;
+    }
+
+    function storyCardHTML(card, index) {
+      return `
+        <article class="story-card">
+          <img src="${cardImage(card.code)}" alt="${card.label}">
+          <h4>${index + 1}. ${card.label}</h4>
+          <p>${advancedCardData(card.suitKey, card.value).deepKeyword}: ${card.meaning}</p>
+        </article>
+      `;
+    }
+
     function renderStudyGuide() {
+      if (state.currentSection === "all") {
+        renderAllFinalGuide();
+        return;
+      }
+      if (state.currentSection === "spreads") {
+        renderSpreadsGuide();
+        return;
+      }
+      if (state.currentSection === "advanced") {
+        renderAdvancedGuide();
+        return;
+      }
+      if (state.currentSection === "readings") {
+        renderReadingGuide();
+        return;
+      }
+      renderSuitStudyGuide();
+    }
+
+    function renderSuitStudyGuide() {
       const suitKey = state.currentSuit;
       const suit = SUITS[suitKey];
       const learned = reviewCardsForSuit(suitKey);
@@ -2364,7 +3266,7 @@
           </div>
         </div>
         <div class="sources">
-          <p>Study set synthesized from common playing-card cartomancy meanings in <a href="https://www.keen.com/articles/tarot/cartomancy-explained-a-guide-to-playing-card-meanings" target="_blank" rel="noreferrer">Keen</a> and <a href="https://www.horoscope.com/article/cartomancy-card-meanings-combinations/" target="_blank" rel="noreferrer">Horoscope.com</a>.</p>
+          <p>Study set synthesized from traditional and modern playing-card cartomancy sources: <a href="https://openlibrary.org/works/OL15671674W/A_manual_of_cartomancy_fortune-telling_and_occult_divination?edition=ia%3Amanualofcartoman00gran" target="_blank" rel="noreferrer">Grand Orient's Manual of Cartomancy</a>, <a href="https://fortunetelling.link/Cartomancy/Forecasting/Playingcard/Playing_Card_Meanings.pdf" target="_blank" rel="noreferrer">Playing Card Meanings</a>, <a href="https://artofcartomancy.blogspot.com/2019/09/the-suit-of-clubs-in-love-readings.html" target="_blank" rel="noreferrer">Art of Cartomancy on Clubs in love readings</a>, <a href="https://www.artismymagic.com/post/what-is-cartomancy-how-to-read-playing-cards" target="_blank" rel="noreferrer">Art Is My Magic</a>, <a href="https://www.horoscope.com/article/cartomancy-card-meanings-combinations/" target="_blank" rel="noreferrer">Horoscope.com</a>, and <a href="https://cardarium.com/ace-of-clubs-meaning-in-cartomancy-and-tarot/" target="_blank" rel="noreferrer">Cardarium</a>.</p>
           <p>Card images load from <a href="https://deckofcardsapi.com/" target="_blank" rel="noreferrer">Deck of Cards API</a> static card assets.</p>
         </div>
       `;
@@ -2381,12 +3283,165 @@
       reviewButton.addEventListener("click", () => startReviewSession(suitKey));
     }
 
+    function renderAllFinalGuide() {
+      els.studyGuide.innerHTML = `
+        <div class="guide-head">
+          <h2>All-Suits Final Guide</h2>
+          <p>One perfect test can complete every suit path. Use this when you already know the deck cold.</p>
+        </div>
+        <div class="guide-body">
+          <div class="review-card">
+            <h3>Perfect Status</h3>
+            <p>${state.perfectFinals?.all ? "The all-suits final is complete at 100%." : "No misses are allowed for the all-suits shortcut."}</p>
+            <div class="review-stats">
+              <div class="review-stat">
+                <strong>${perfectSuitCount()}/4</strong>
+                <span>Suit Finals</span>
+              </div>
+              <div class="review-stat">
+                <strong>${state.perfectFinals?.all ? "Yes" : "No"}</strong>
+                <span>All Final</span>
+              </div>
+            </div>
+            <button class="button" type="button" id="guideAllFinal">Take Final</button>
+          </div>
+          <div class="theme-card">
+            <h3>Best Strategy</h3>
+            <p>Answer by suit first, then value. Suit tells the arena; value tells the movement; courts identify the person or messenger.</p>
+          </div>
+        </div>
+      `;
+      els.studyGuide.querySelector("#guideAllFinal").addEventListener("click", startAllFinal);
+    }
+
+    function renderSpreadsGuide() {
+      els.studyGuide.innerHTML = `
+        <div class="guide-head">
+          <h2>Spread Guide</h2>
+          <p>Cartomancy spreads lean on suit clusters, red-black balance, repeated values, court cards, and proximity.</p>
+        </div>
+        <div class="guide-body">
+          ${SPREADS.map((spread) => `
+            <div class="theme-card">
+              <h3>${spread.title}</h3>
+              <p>${spread.cartomancy}</p>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderAdvancedGuide() {
+      if (!advancedUnlocked()) {
+        els.studyGuide.innerHTML = `
+          <div class="guide-head">
+            <h2>Advanced Locked</h2>
+            <p>Score 100% on every suit final and the all-suits final.</p>
+          </div>
+          <div class="guide-body">
+            <div class="theme-card">
+              <h3>Shortcut</h3>
+              <p>A perfect all-suits final completes every suit path and satisfies the suit-final requirement.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const suitKey = state.currentSuit;
+      const suit = SUITS[suitKey];
+      els.studyGuide.innerHTML = `
+        <div class="guide-head">
+          <h2>Deep ${suit.name}</h2>
+          <p>Click a card for its deeper reading note.</p>
+        </div>
+        <div class="guide-body">
+          <div class="review-card">
+            <h3>Advanced Progress</h3>
+            <p>${advancedComplete() ? "All advanced tests are passed. Story readings are open." : "Pass all advanced tests to unlock story readings."}</p>
+            <div class="review-stats">
+              <div class="review-stat">
+                <strong>${advancedCompletedCount()}</strong>
+                <span>Passed</span>
+              </div>
+              <div class="review-stat">
+                <strong>${ADVANCED_LEVELS.length}</strong>
+                <span>Total</span>
+              </div>
+            </div>
+          </div>
+          <div class="theme-card">
+            <h3>Current Suit Rule</h3>
+            <p>${ADVANCED_SUIT_NOTES[suitKey]}</p>
+          </div>
+          ${Object.values(SUITS).filter((item) => item.key !== suitKey).map((otherSuit) => `
+            <div class="theme-card">
+              <h3>${otherSuit.name} Deep Rule</h3>
+              <p>${ADVANCED_SUIT_NOTES[otherSuit.key]}</p>
+            </div>
+          `).join("")}
+          <div class="card-grid">
+            ${VALUES.map((value) => {
+              const card = advancedCardData(suitKey, value);
+              return `
+                <button class="study-card" type="button" data-advanced-card="${card.code}" title="${card.label}: ${card.deep}">
+                  <img src="${cardImage(card.code)}" alt="${card.label}">
+                  <span>${card.deepKeyword}</span>
+                </button>
+              `;
+            }).join("")}
+          </div>
+        </div>
+        <div class="sources">
+          <p>Advanced notes are researched from old and modern playing-card cartomancy lists, with special weight on how card meanings change by question, surrounding suits, and combinations.</p>
+          <p>Key sources include <a href="https://openlibrary.org/works/OL15671674W/A_manual_of_cartomancy_fortune-telling_and_occult_divination?edition=ia%3Amanualofcartoman00gran" target="_blank" rel="noreferrer">Grand Orient</a>, <a href="https://fortunetelling.link/Cartomancy/Forecasting/Playingcard/Playing_Card_Meanings.pdf" target="_blank" rel="noreferrer">Playing Card Meanings</a>, <a href="https://artofcartomancy.blogspot.com/2019/09/the-suit-of-clubs-in-love-readings.html" target="_blank" rel="noreferrer">Art of Cartomancy</a>, and <a href="https://cardarium.com/ace-of-clubs-meaning-in-cartomancy-and-tarot/" target="_blank" rel="noreferrer">Cardarium</a>.</p>
+        </div>
+      `;
+
+      els.studyGuide.querySelectorAll("[data-advanced-card]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const code = button.dataset.advancedCard;
+          const card = advancedCardData(code.slice(-1), code.slice(0, -1));
+          showToast(`${card.label}: ${card.deep}`);
+        });
+      });
+    }
+
+    function renderReadingGuide() {
+      els.studyGuide.innerHTML = `
+        <div class="guide-head">
+          <h2>Reading Checker</h2>
+          <p>The checker is intentionally practical: it looks for card meanings, all three cards, and a connected story.</p>
+        </div>
+        <div class="guide-body">
+          <div class="theme-card">
+            <h3>What Counts</h3>
+            <p>Name the situation, include at least one real theme from each card, and explain how the first card develops into the last card.</p>
+          </div>
+          <div class="review-card">
+            <h3>Practice Stats</h3>
+            <div class="review-stats">
+              <div class="review-stat">
+                <strong>${state.readingPractice?.passed || 0}</strong>
+                <span>Passed</span>
+              </div>
+              <div class="review-stat">
+                <strong>${state.readingPractice?.attempts || 0}</strong>
+                <span>Attempts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function resetProgress() {
-      const confirmed = window.confirm("Reset XP and all lesson progress?");
+      const confirmed = window.confirm("Reset XP, lessons, finals, spreads, advanced tests, and reading practice?");
       if (!confirmed) {
         return;
       }
       state = freshDefaultState();
+      activeReading = null;
       saveState();
       render();
       showToast("Progress reset.");
@@ -2397,7 +3452,9 @@
         return;
       }
       activeSession = {
+        mode: "lesson",
         suitKey,
+        sectionTitle: SUITS[suitKey].name,
         level,
         questions: buildQuestions(suitKey, level),
         index: 0,
@@ -2413,6 +3470,67 @@
       renderQuestion();
     }
 
+    function startAllFinal() {
+      const questions = buildMixedCardQuestions(getAllCards(), ALL_FINAL_LEVEL.questionCount);
+      activeSession = {
+        mode: "all-final",
+        suitKey: state.currentSuit,
+        sectionTitle: "All Suits",
+        level: ALL_FINAL_LEVEL,
+        questions,
+        index: 0,
+        correct: 0,
+        lives: questions.length,
+        xp: 0,
+        answered: false
+      };
+
+      document.documentElement.style.setProperty("--active-color", SECTION_META.all.color);
+      els.lessonScreen.classList.add("active");
+      renderQuestion();
+    }
+
+    function startAdvancedLesson(level) {
+      const cards = level.suitKey
+        ? VALUES.map((value) => advancedCardData(level.suitKey, value))
+        : getAllAdvancedCards();
+      activeSession = {
+        mode: "advanced",
+        suitKey: level.suitKey || state.currentSuit,
+        sectionTitle: "Advanced",
+        level,
+        questions: buildAdvancedQuestions(cards, level.questionCount),
+        index: 0,
+        correct: 0,
+        lives: level.final ? 5 : 4,
+        xp: 0,
+        answered: false
+      };
+
+      document.documentElement.style.setProperty("--active-color", SECTION_META.advanced.color);
+      els.lessonScreen.classList.add("active");
+      renderQuestion();
+    }
+
+    function startSpreadLesson(level) {
+      activeSession = {
+        mode: "spread",
+        suitKey: state.currentSuit,
+        sectionTitle: "Spreads",
+        level,
+        questions: buildSpreadQuestions(level),
+        index: 0,
+        correct: 0,
+        lives: 3,
+        xp: 0,
+        answered: false
+      };
+
+      document.documentElement.style.setProperty("--active-color", SECTION_META.spreads.color);
+      els.lessonScreen.classList.add("active");
+      renderQuestion();
+    }
+
     function startReviewSession(suitKey) {
       const due = dueReviewCards(suitKey);
       if (!due.length) {
@@ -2423,6 +3541,7 @@
       activeSession = {
         mode: "review",
         suitKey,
+        sectionTitle: SUITS[suitKey].name,
         level: {
           key: "timed-review",
           title: "Timed Review",
@@ -2472,6 +3591,55 @@
       return shuffle(questions);
     }
 
+    function buildMixedCardQuestions(cards, targetCount) {
+      const builders = [
+        (card) => buildMeaningQuestion(card, cards),
+        (card) => buildCardQuestion(card, cards),
+        (card) => buildKeywordQuestion(card, cards),
+        (card) => buildCardFromKeywordQuestion(card, cards)
+      ];
+      return shuffle(shuffle(cards).slice(0, targetCount).map((card, index) => builders[index % builders.length](card)));
+    }
+
+    function buildAdvancedQuestions(cards, targetCount) {
+      const builders = [
+        buildDeepMeaningQuestion,
+        buildDeepKeywordQuestion,
+        buildCardFromDeepQuestion
+      ];
+      const questions = [];
+      let round = 0;
+      while (questions.length < targetCount) {
+        shuffle(cards).forEach((card) => {
+          if (questions.length < targetCount) {
+            questions.push(builders[round % builders.length](card, cards));
+            round += 1;
+          }
+        });
+      }
+      return shuffle(questions);
+    }
+
+    function buildSpreadQuestions(level) {
+      const spreads = level.spreadKeys.map(getSpread);
+      const builders = [
+        buildSpreadPurposeQuestion,
+        buildSpreadPositionQuestion,
+        buildSpreadMethodQuestion
+      ];
+      const questions = [];
+      let round = 0;
+      while (questions.length < level.questionCount) {
+        shuffle(spreads).forEach((spread) => {
+          if (questions.length < level.questionCount) {
+            questions.push(builders[round % builders.length](spread));
+            round += 1;
+          }
+        });
+      }
+      return shuffle(questions);
+    }
+
     function buildReviewQuestions(cards) {
       const builders = [
         buildMeaningQuestion,
@@ -2498,8 +3666,8 @@
       };
     }
 
-    function buildMeaningQuestion(card) {
-      const wrongCards = sample(getAllCards(), 3, [card.code]);
+    function buildMeaningQuestion(card, pool = getAllCards()) {
+      const wrongCards = sample(pool, 3, [card.code]);
       return {
         kind: "meaning",
         prompt: `What does the ${card.label} traditionally point to?`,
@@ -2513,8 +3681,8 @@
       };
     }
 
-    function buildKeywordQuestion(card) {
-      const wrongCards = sample(getAllCards(), 3, [card.code]);
+    function buildKeywordQuestion(card, pool = getAllCards()) {
+      const wrongCards = sample(pool, 3, [card.code]);
       return {
         kind: "keyword",
         prompt: `Which memory keyword belongs to the ${card.label}?`,
@@ -2532,9 +3700,9 @@
       };
     }
 
-    function buildCardQuestion(card) {
-      const sameSuitCards = VALUES.map((value) => cardData(card.suitKey, value));
-      const wrongCards = sample(sameSuitCards, 3, [card.code]);
+    function buildCardQuestion(card, pool = null) {
+      const optionPool = pool || VALUES.map((value) => cardData(card.suitKey, value));
+      const wrongCards = sample(optionPool, 3, [card.code]);
       return {
         kind: "card",
         prompt: "Which card matches this meaning?",
@@ -2548,9 +3716,9 @@
       };
     }
 
-    function buildCardFromKeywordQuestion(card) {
-      const sameSuitCards = VALUES.map((value) => cardData(card.suitKey, value));
-      const wrongCards = sample(sameSuitCards, 3, [card.code]);
+    function buildCardFromKeywordQuestion(card, pool = null) {
+      const optionPool = pool || VALUES.map((value) => cardData(card.suitKey, value));
+      const wrongCards = sample(optionPool, 3, [card.code]);
       return {
         kind: "card",
         prompt: "Which card matches this memory keyword?",
@@ -2566,6 +3734,111 @@
           }))
         ]),
         explain: `"${card.keyword}" points to the ${card.label}: ${card.meaning}.`
+      };
+    }
+
+    function buildDeepMeaningQuestion(card, pool) {
+      const wrongCards = sample(pool, 3, [card.code]);
+      return {
+        kind: "advanced",
+        prompt: `What is the deeper reading of the ${card.label}?`,
+        detail: "Choose the answer that includes the card's deeper subtext.",
+        card,
+        options: shuffle([
+          { id: `${card.code}-deep`, label: card.deep, correct: true },
+          ...wrongCards.map((wrongCard) => ({ id: `${wrongCard.code}-deep`, label: wrongCard.deep, correct: false }))
+        ]),
+        explain: `${card.label}: ${card.deep}`
+      };
+    }
+
+    function buildDeepKeywordQuestion(card, pool) {
+      const wrongCards = sample(pool, 3, [card.code]);
+      return {
+        kind: "advanced-keyword",
+        prompt: `Which advanced keyword belongs to the ${card.label}?`,
+        detail: "Advanced keywords are short hooks for the deeper reading note.",
+        card,
+        options: shuffle([
+          { id: `${card.code}-deep-keyword`, label: card.deepKeyword, correct: true },
+          ...wrongCards.map((wrongCard) => ({
+            id: `${wrongCard.code}-deep-keyword`,
+            label: wrongCard.deepKeyword,
+            correct: false
+          }))
+        ]),
+        explain: `${card.label} uses "${card.deepKeyword}": ${card.deep}`
+      };
+    }
+
+    function buildCardFromDeepQuestion(card, pool) {
+      const wrongCards = sample(pool, 3, [card.code]);
+      return {
+        kind: "card",
+        prompt: "Which card matches this deeper note?",
+        detail: card.deep,
+        card,
+        options: shuffle([
+          { id: card.code, label: card.label, card, correct: true },
+          ...wrongCards.map((wrongCard) => ({ id: wrongCard.code, label: wrongCard.label, card: wrongCard, correct: false }))
+        ]),
+        explain: `${card.deep} This is the ${card.label}.`
+      };
+    }
+
+    function buildSpreadPurposeQuestion(spread) {
+      const wrongSpreads = sample(SPREADS, 3, [spread.key]);
+      return {
+        kind: "spread",
+        prompt: "Which spread best fits this use?",
+        detail: spread.when,
+        visualTitle: spread.title,
+        visualDetail: spread.positions.join(" / "),
+        options: shuffle([
+          { id: spread.key, label: spread.title, correct: true },
+          ...wrongSpreads.map((wrongSpread) => ({ id: wrongSpread.key, label: wrongSpread.title, correct: false }))
+        ]),
+        explain: `${spread.title}: ${spread.when} ${spread.method}`
+      };
+    }
+
+    function buildSpreadPositionQuestion(spread) {
+      const wrongSpreads = sample(SPREADS, 3, [spread.key]);
+      return {
+        kind: "spread",
+        prompt: "Which spread uses these positions?",
+        detail: spread.positions.join(" / "),
+        visualTitle: `${spread.cards} cards`,
+        visualDetail: spread.positions.join(" / "),
+        options: shuffle([
+          { id: `${spread.key}-positions`, label: spread.title, correct: true },
+          ...wrongSpreads.map((wrongSpread) => ({
+            id: `${wrongSpread.key}-positions`,
+            label: wrongSpread.title,
+            correct: false
+          }))
+        ]),
+        explain: `${spread.title} uses: ${spread.positions.join(", ")}.`
+      };
+    }
+
+    function buildSpreadMethodQuestion(spread) {
+      const wrongSpreads = sample(SPREADS, 3, [spread.key]);
+      return {
+        kind: "spread",
+        prompt: "Which method belongs to this spread?",
+        detail: spread.title,
+        visualTitle: spread.title,
+        visualDetail: spread.cartomancy,
+        options: shuffle([
+          { id: `${spread.key}-method`, label: spread.method, correct: true },
+          ...wrongSpreads.map((wrongSpread) => ({
+            id: `${wrongSpread.key}-method`,
+            label: wrongSpread.method,
+            correct: false
+          }))
+        ]),
+        explain: `${spread.title}: ${spread.method}`
       };
     }
 
@@ -2609,10 +3882,12 @@
       const current = activeSession.index + 1;
       const progress = Math.round(((current - 1) / total) * 100);
 
-      els.lessonHeading.textContent = `${SUITS[activeSession.suitKey].name}: ${activeSession.level.title}`;
+      els.lessonHeading.textContent = `${activeSession.sectionTitle || SUITS[activeSession.suitKey].name}: ${activeSession.level.title}`;
       els.lessonSubheading.textContent = `Question ${current} of ${total}`;
       els.questionProgress.style.setProperty("--question-progress", `${progress}%`);
-      els.livesDisplay.textContent = `${activeSession.lives} ${activeSession.lives === 1 ? "life" : "lives"}`;
+      els.livesDisplay.textContent = activeSession.mode === "all-final"
+        ? "100% needed"
+        : `${activeSession.lives} ${activeSession.lives === 1 ? "life" : "lives"}`;
       els.sessionXp.textContent = `+${activeSession.xp} XP`;
 
       els.lessonBody.classList.remove("result", "active");
@@ -2650,6 +3925,12 @@
       if (question.kind === "keyword") {
         return "Use the card image to choose its memory hook.";
       }
+      if (question.kind === "advanced" || question.kind === "advanced-keyword") {
+        return "Use the card image to choose its deeper layer.";
+      }
+      if (question.kind === "spread") {
+        return question.detail;
+      }
       return question.detail;
     }
 
@@ -2659,6 +3940,12 @@
       }
       if (question.kind === "keyword") {
         return "Pick the keyword";
+      }
+      if (question.kind === "advanced-keyword") {
+        return "Pick the advanced keyword";
+      }
+      if (question.kind === "spread") {
+        return "Pick the spread";
       }
       return "Pick the meaning";
     }
@@ -2670,10 +3957,24 @@
       if (question.kind === "keyword") {
         return "A correct keyword answer adds XP and strengthens the card recall loop.";
       }
+      if (question.kind === "advanced" || question.kind === "advanced-keyword") {
+        return "Advanced questions ask for subtext, shadow, and reading nuance.";
+      }
+      if (question.kind === "spread") {
+        return "Match the layout to its use, positions, or reading method.";
+      }
       return "A correct answer adds XP and extends your streak. Misses cost lives.";
     }
 
     function promptVisualHTML(question) {
+      if (question.visualTitle) {
+        return `
+          <div class="meaning-prompt">
+            <span>${question.visualTitle}</span>
+            <strong>${question.visualDetail}</strong>
+          </div>
+        `;
+      }
       if (question.kind === "card") {
         return `
           <div class="meaning-prompt">
@@ -2720,7 +4021,7 @@
 
       if (isCorrect) {
         activeSession.correct += 1;
-        activeSession.xp += activeSession.mode === "review" ? 1 : activeSession.level.final ? 3 : 2;
+        activeSession.xp += questionXp(activeSession);
         state.streak += 1;
         state.bestRun = Math.max(state.bestRun, state.streak);
       } else {
@@ -2736,7 +4037,9 @@
       feedback.classList.add("active", isCorrect ? "good" : "bad");
       feedbackTitle.textContent = isCorrect ? "Correct" : "Study note";
       feedbackText.textContent = question.explain;
-      els.livesDisplay.textContent = `${activeSession.lives} ${activeSession.lives === 1 ? "life" : "lives"}`;
+      els.livesDisplay.textContent = activeSession.mode === "all-final"
+        ? "100% needed"
+        : `${activeSession.lives} ${activeSession.lives === 1 ? "life" : "lives"}`;
       els.sessionXp.textContent = `+${activeSession.xp} XP`;
 
       const continueButton = els.lessonBody.querySelector("#continueQuestion");
@@ -2746,18 +4049,32 @@
       });
     }
 
+    function questionXp(session) {
+      if (session.mode === "review") {
+        return 1;
+      }
+      if (session.mode === "all-final") {
+        return 2;
+      }
+      if (session.mode === "advanced") {
+        return session.level.final ? 4 : 3;
+      }
+      if (session.mode === "spread") {
+        return 2;
+      }
+      return session.level.final ? 3 : 2;
+    }
+
     function renderResult() {
       const session = activeSession;
       const total = session.questions.length;
       const isReview = session.mode === "review";
-      const passed = isReview || (session.lives > 0 && session.correct >= Math.ceil(total * 0.7));
-      const alreadyComplete = !isReview && Boolean(state.completed[session.suitKey]?.[session.level.key]);
+      const passed = sessionPassed(session);
       const earnedXp = isReview ? session.xp : passed ? session.level.xp + session.xp : Math.floor(session.xp / 2);
 
       state.xp += earnedXp;
-      if (!isReview && passed && !alreadyComplete) {
-        state.completed[session.suitKey][session.level.key] = true;
-        syncReviewCards();
+      if (!isReview && passed) {
+        completeSession(session);
       }
       saveState();
 
@@ -2768,16 +4085,16 @@
       els.lessonBody.innerHTML = `
         <div class="result active">
           <div class="result-badge">${passed ? "&#10003;" : "!"}</div>
-          <h2>${isReview ? "Review complete" : passed ? "Level passed" : "Practice round"}</h2>
-          <p>${passed ? resultPassCopy(session) : "You ran out of room for misses or missed the pass mark. Review the guide and take this level again."}</p>
+          <h2>${resultTitle(session, passed)}</h2>
+          <p>${passed ? resultPassCopy(session) : resultFailCopy(session)}</p>
           <div class="result-stats">
             <div class="result-stat">
               <strong>${session.correct}/${total}</strong>
               <span>Correct</span>
             </div>
             <div class="result-stat">
-              <strong>${session.lives}</strong>
-              <span>Lives Left</span>
+              <strong>${session.mode === "all-final" ? total - session.correct : session.lives}</strong>
+              <span>${session.mode === "all-final" ? "Misses" : "Lives Left"}</span>
             </div>
             <div class="result-stat">
               <strong>+${earnedXp}</strong>
@@ -2795,11 +4112,73 @@
       els.lessonBody.querySelector("#resultRetry").addEventListener("click", () => {
         if (isReview) {
           startReviewSession(session.suitKey);
+        } else if (session.mode === "all-final") {
+          startAllFinal();
+        } else if (session.mode === "advanced") {
+          startAdvancedLesson(session.level);
+        } else if (session.mode === "spread") {
+          startSpreadLesson(session.level);
         } else {
           startLesson(session.suitKey, session.level);
         }
       });
       renderHud();
+    }
+
+    function sessionPassed(session) {
+      const total = session.questions.length;
+      if (session.mode === "review") {
+        return true;
+      }
+      if (session.mode === "all-final") {
+        return session.correct === total;
+      }
+      if (session.mode === "advanced") {
+        return session.lives > 0 && session.correct >= Math.ceil(total * 0.8);
+      }
+      if (session.mode === "spread") {
+        return session.lives > 0 && session.correct >= Math.ceil(total * 0.75);
+      }
+      return session.lives > 0 && session.correct >= Math.ceil(total * 0.7);
+    }
+
+    function completeSession(session) {
+      if (session.mode === "lesson") {
+        if (!state.completed[session.suitKey]) {
+          state.completed[session.suitKey] = {};
+        }
+        if (session.level.final && session.correct === session.questions.length) {
+          completeSuit(session.suitKey, true);
+        } else {
+          state.completed[session.suitKey][session.level.key] = true;
+          syncReviewCards();
+        }
+      } else if (session.mode === "all-final") {
+        completeAllSuitsPerfect();
+      } else if (session.mode === "advanced") {
+        state.completedAdvanced[session.level.key] = true;
+      } else if (session.mode === "spread") {
+        state.completedSpreads[session.level.key] = true;
+      }
+    }
+
+    function resultTitle(session, passed) {
+      if (session.mode === "review") {
+        return "Review complete";
+      }
+      if (!passed) {
+        return "Practice round";
+      }
+      if (session.mode === "all-final") {
+        return "All suits mastered";
+      }
+      if (session.mode === "advanced") {
+        return "Advanced test passed";
+      }
+      if (session.mode === "spread") {
+        return "Spread test passed";
+      }
+      return session.level.final && session.correct === session.questions.length ? "Perfect final" : "Level passed";
     }
 
     function resultPassCopy(session) {
@@ -2809,10 +4188,131 @@
           ? `${dueLeft} ${dueLeft === 1 ? "card is" : "cards are"} still due for this suit.`
           : "Your due cards moved forward on the timed review schedule.";
       }
+      if (session.mode === "all-final") {
+        return "Perfect score. Every suit lesson and suit final is now complete, and advanced meanings are unlocked.";
+      }
+      if (session.mode === "advanced") {
+        return advancedComplete()
+          ? "All advanced tests are passed. Story reading practice is now open."
+          : "That deep-meaning test is complete. Keep going until the story readings unlock.";
+      }
+      if (session.mode === "spread") {
+        return "That spread lesson is complete. Keep practicing layout choice, position meaning, and cartomancy pattern reading.";
+      }
       if (session.level.final) {
-        return `You completed the ${SUITS[session.suitKey].name} final. That suit is now mastered in your path.`;
+        return session.correct === session.questions.length
+          ? `Perfect score. Every ${SUITS[session.suitKey].name} lesson is now complete.`
+          : `You completed the ${SUITS[session.suitKey].name} final. Score 100% on this final to complete the whole suit at once.`;
       }
       return `You unlocked the next ${SUITS[session.suitKey].name} level. Keep the streak moving while the meanings are fresh.`;
+    }
+
+    function resultFailCopy(session) {
+      if (session.mode === "all-final") {
+        return "The all-suits final only passes at 100%. Any miss keeps advanced meanings locked, but the questions you got right still earned practice XP.";
+      }
+      if (session.mode === "advanced") {
+        return "Advanced tests need 80% and at least one life left. Review the deep notes and retry this test.";
+      }
+      if (session.mode === "spread") {
+        return "Spread tests need 75% and at least one life left. Review the spread guide, then retry.";
+      }
+      return "You ran out of room for misses or missed the pass mark. Review the guide and take this level again.";
+    }
+
+    function checkStoryReading() {
+      const input = els.mainStage.querySelector("#storyInput");
+      const result = els.mainStage.querySelector("#storyResult");
+      if (!input || !result || !activeReading) {
+        return;
+      }
+
+      const scored = scoreStoryReading(input.value, activeReading);
+      state.readingPractice.attempts = (state.readingPractice.attempts || 0) + 1;
+      if (scored.passed) {
+        state.readingPractice.passed = (state.readingPractice.passed || 0) + 1;
+        state.xp += 25;
+      }
+      saveState();
+      renderHud();
+      renderReadingGuide();
+
+      result.className = `story-result active ${scored.passed ? "good" : "bad"}`;
+      result.innerHTML = `
+        <strong>${scored.passed ? "Reading accepted" : scored.close ? "Close, but strengthen it" : "Needs more card evidence"}</strong>
+        <p>${scored.message}</p>
+        <p><strong>Matched cards:</strong> ${scored.perCard.map((item) => `${item.card.label} (${item.hits.length ? item.hits.join(", ") : "no clear hit"})`).join("; ")}</p>
+      `;
+    }
+
+    function scoreStoryReading(text, cards) {
+      const normalized = normalizeText(text);
+      const wordCount = normalized ? normalized.split(/\s+/).length : 0;
+      const hasConnector = STORY_CONNECTORS.some((word) => normalized.includes(word));
+      const perCard = cards.map((card) => {
+        const advanced = advancedCardData(card.suitKey, card.value);
+        const tokens = storyTokensForCard(advanced);
+        const hits = tokens.filter((token) => normalized.includes(token)).slice(0, 5);
+        return {
+          card,
+          hits,
+          score: Math.min(hits.length, 3)
+        };
+      });
+      const totalScore = perCard.reduce((sum, item) => sum + item.score, 0);
+      const allCardsPresent = perCard.every((item) => item.score >= 1);
+      const passed = wordCount >= 18 && hasConnector && allCardsPresent && totalScore >= 6;
+      const close = wordCount >= 14 && perCard.filter((item) => item.score >= 1).length >= 2;
+      const missing = perCard.filter((item) => item.score < 1).map((item) => item.card.label);
+
+      let message = "";
+      if (passed) {
+        message = "You used all three cards and connected them into a moving story. +25 XP.";
+      } else if (!wordCount || wordCount < 18) {
+        message = "Write a fuller reading. Aim for at least two or three sentences that show movement from the first card to the last.";
+      } else if (!hasConnector) {
+        message = "Add connection language such as because, then, but, so, leads, or reveals to make it a story instead of a list.";
+      } else if (missing.length) {
+        message = `Add a clear meaning from: ${missing.join(", ")}.`;
+      } else {
+        message = "Use more exact card meanings or advanced keywords so the reading can be checked confidently.";
+      }
+
+      return {
+        passed,
+        close,
+        message,
+        perCard
+      };
+    }
+
+    function storyTokensForCard(card) {
+      const text = `${card.label} ${card.keyword} ${card.meaning} ${card.deepKeyword} ${card.deep} ${card.suit.name} ${card.suit.domain}`;
+      const banned = new Set(["with", "that", "this", "from", "into", "card", "read", "reading", "and", "the", "for", "has", "have", "become", "becomes"]);
+      return [...new Set(normalizeText(text).split(/\s+/))]
+        .filter((word) => word.length >= 5 && !banned.has(word))
+        .slice(0, 28);
+    }
+
+    function normalizeText(text) {
+      return (text || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function showModelReading() {
+      const result = els.mainStage.querySelector("#storyResult");
+      if (!result || !activeReading) {
+        return;
+      }
+      const [first, second, third] = activeReading.map((card) => advancedCardData(card.suitKey, card.value));
+      result.className = "story-result active";
+      result.innerHTML = `
+        <strong>Model Reading</strong>
+        <p>${first.label} opens with ${first.deepKeyword}, so the situation begins around ${first.keyword}. Then ${second.label} brings ${second.deepKeyword}, showing how the matter changes through ${second.keyword}. By the time ${third.label} appears, the story points toward ${third.deepKeyword}: ${third.meaning.toLowerCase()}.</p>
+      `;
     }
 
     function closeLesson() {
